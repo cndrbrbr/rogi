@@ -1,2 +1,48 @@
 # rogi
-a small terminal rogue game
+
+A small terminal rogue game — a from-scratch recreation of the classic MS-DOS dungeon crawler *Rogue*, in Python with `curses`. Procedurally generated dungeons, permadeath, hunger clock, a full monster bestiary, and a pet dog that grows when you feed it.
+
+## Running it
+
+```
+pip install windows-curses   # Windows only; curses is built-in on Linux/macOS
+python main.py
+```
+
+Requires an 80x24 (or larger) terminal.
+
+## Controls
+
+| Key(s)          | Action                          |
+|-----------------|----------------------------------|
+| h/j/k/l, y/u/b/n, arrows | Move (bump a monster to attack) |
+| `i`             | Show inventory                  |
+| `w` / `W`       | Wield a weapon / wear armor      |
+| `q` / `r`       | Quaff a potion / read a scroll   |
+| `e`             | Eat food                         |
+| `d`             | Drop an item (or feed the dog if standing next to it) |
+| `>` / `<`       | Use stairs down / up             |
+| `s` / `.`       | Search / wait a turn             |
+| `?`             | Help screen                      |
+| `Q`             | Quit (saves progress)            |
+
+Items are picked up automatically by walking over them.
+
+## Goal
+
+Descend 26 procedurally generated dungeon levels, retrieve the Amulet of Yendor, and carry it back up to level 1 to win. Death is permanent — there's no reloading after you die.
+
+## The dog
+
+A dog spawns next to you at the start of the game and follows you (including through stairs). Stand next to it and drop a food item (`d`) to feed it — it grows from a small `d` into a big `D` and will fight monsters that come near it.
+
+## Implementation notes
+
+- **Dungeon generation** (`rogue/dungeon.py`): the map area is divided into a 3x3 grid of cells, each gets a randomly sized/positioned room. Rooms are connected with a randomized spanning tree over the 3x3 grid graph (plus a chance of extra edges for loops), and corridors are carved as L-shaped paths between doors punched through facing room walls.
+- **Visibility** (`rogue/dungeon.py: Level.visible_from`): matches the original's room-based lighting rather than modern raycast FOV — standing in a room lights the whole room; standing in a corridor only lights your immediate surroundings. `Level.discovered` remembers tiles you've seen (drawn dim) even once they're out of the currently-lit set.
+- **Turn loop** (`rogue/game.py: Game._end_turn`): every player action that consumes a turn triggers hunger decay, confusion/blindness countdowns, natural regen, the monster AI pass, and the dog's AI pass, in that order, then checks for player death.
+- **Combat** (`rogue/combat.py`): a simplified to-hit/damage model (`45 + atk*5 - defender_ac*4` percent chance to hit, capped 5-95%) rather than the original's exact tables, since those internals weren't being reproduced verbatim.
+- **Monsters** (`rogue/monsters_data.py`): 26 species, one per letter A-Z, with stats that scale roughly with letter/depth. Spawn selection (`Game._pick_species_index`) weights toward species near the current dungeon depth.
+- **Unidentified items** (`rogue/items.py`): potion colors and scroll titles are shuffled onto effects at the start of each game (`make_appearance_maps`), so "blue potion" means something different every playthrough until identified by use or a scroll of identify.
+- **The dog** (`rogue/entities.py: Dog`, `rogue/game.py: Game._dog_turn`): follows the player each turn if more than one tile away, attacks any monster adjacent to it instead of moving, and is unkillable by design (no hp tracked) to keep it a simple companion rather than another thing to manage.
+- **Permadeath & saves**: `Game.save()`/`Game.load()` pickle the whole game state to `save.dat`; the save is deleted on both death and victory, so there's no way to reload past either.
