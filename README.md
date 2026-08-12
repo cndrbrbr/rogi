@@ -2,6 +2,8 @@
 
 A small terminal rogue game — a from-scratch recreation of the classic MS-DOS dungeon crawler *Rogue*, in Python with `curses`. Procedurally generated dungeons, permadeath, hunger clock, a full monster bestiary, and a pet dog that grows when you feed it.
 
+![rogi gameplay screenshot](rogi.png)
+
 ## Running it
 
 ```
