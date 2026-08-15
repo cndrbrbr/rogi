@@ -4,6 +4,12 @@ A small terminal rogue game — a from-scratch recreation of the classic MS-DOS 
 
 ![rogi gameplay screenshot](rogi.png)
 
+## Docs
+
+- [Features](docs/features.html) — everything the game does
+- [Ruleset](docs/ruleset.html) — stats, combat math, item odds, status effects, full A–Z bestiary
+- [Roadmap](docs/roadmap.html) — gaps versus classic Rogue
+
 ## Running it
 
 ```
