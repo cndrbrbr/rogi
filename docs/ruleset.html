@@ -1,0 +1,254 @@
+<title>rogi Ruleset</title>
+<style>
+  :root {
+    --bg: #e7e0d0;
+    --surface: #ddd4bf;
+    --surface-2: #d3c8ad;
+    --ink: #211b12;
+    --ink-soft: #56503e;
+    --ember: #a2531a;
+    --ember-strong: #8a4514;
+    --moss: #3f5b36;
+    --blood: #833131;
+    --border: #c3b795;
+    --border-soft: #d3c8ad;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17130d; --surface: #211b12; --surface-2: #2a2317;
+      --ink: #ece4d0; --ink-soft: #b3a98d;
+      --ember: #e2894a; --ember-strong: #f0a367;
+      --moss: #8bab7c; --blood: #d97575;
+      --border: #3d3524; --border-soft: #2a2317;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #17130d; --surface: #211b12; --surface-2: #2a2317;
+    --ink: #ece4d0; --ink-soft: #b3a98d;
+    --ember: #e2894a; --ember-strong: #f0a367;
+    --moss: #8bab7c; --blood: #d97575;
+    --border: #3d3524; --border-soft: #2a2317;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, "Noto Serif", serif;
+    font-size: 1rem; line-height: 1.65; -webkit-font-smoothing: antialiased;
+  }
+  .mono { font-family: ui-monospace, "JetBrains Mono", "Fira Code", "SFMono-Regular", Menlo, Consolas, monospace; }
+  a { color: var(--ember-strong); }
+  a:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
+
+  header.banner { background: var(--surface); border-bottom: 1px solid var(--border); padding: 2.75rem 1.5rem 2rem; }
+  .banner-inner { max-width: 760px; margin: 0 auto; }
+  .prompt-line { font-family: ui-monospace, "JetBrains Mono", "Fira Code", "SFMono-Regular", Menlo, Consolas, monospace; font-size: 0.8125rem; color: var(--ink-soft); letter-spacing: 0.02em; margin: 0 0 1rem; }
+  .prompt-line .caret { color: var(--moss); }
+  h1.title { font-family: ui-monospace, "JetBrains Mono", "Fira Code", "SFMono-Regular", Menlo, Consolas, monospace; font-weight: 700; font-size: clamp(2.1rem, 6vw, 3rem); letter-spacing: 0.02em; margin: 0 0 0.6rem; text-wrap: balance; }
+  h1.title .amulet { color: var(--ember); }
+  p.subtitle { margin: 0 0 1.5rem; max-width: 60ch; font-size: 1.0625rem; color: var(--ink-soft); }
+  .source-note { margin-top: 1.25rem; font-size: 0.8125rem; color: var(--ink-soft); }
+  .source-note a { color: var(--ink-soft); text-decoration-color: var(--border); }
+
+  nav.series { position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 1px solid var(--border); }
+  .series-inner { max-width: 760px; margin: 0 auto; padding: 0.7rem 1.5rem; display: flex; flex-wrap: wrap; gap: 0.4rem 0; font-family: ui-monospace, "JetBrains Mono", "Fira Code", "SFMono-Regular", Menlo, Consolas, monospace; font-size: 0.8125rem; }
+  .series-inner a, .series-inner span.current { text-decoration: none; padding: 0.15rem 0.7rem; border-right: 1px solid var(--border-soft); letter-spacing: 0.03em; }
+  .series-inner a { color: var(--ink-soft); }
+  .series-inner a:hover { color: var(--ember); }
+  .series-inner span.current { color: var(--ember); font-weight: 700; }
+  .series-inner a:last-child, .series-inner span.current:last-child { border-right: none; }
+
+  nav.toc { position: sticky; top: 2.4rem; z-index: 4; background: var(--bg); border-bottom: 1px solid var(--border-soft); }
+  .toc-inner { max-width: 760px; margin: 0 auto; padding: 0.55rem 1.5rem; display: flex; flex-wrap: wrap; gap: 0.3rem 0; font-family: ui-monospace, "JetBrains Mono", "Fira Code", "SFMono-Regular", Menlo, Consolas, monospace; font-size: 0.75rem; }
+  .toc-inner a { color: var(--ink-soft); text-decoration: none; padding: 0.1rem 0.6rem; border-right: 1px solid var(--border-soft); letter-spacing: 0.03em; }
+  .toc-inner a:last-child { border-right: none; }
+  .toc-inner a:hover { color: var(--ember); }
+
+  main { max-width: 760px; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
+  section { scroll-margin-top: 5.5rem; }
+  section + section { margin-top: 3.25rem; }
+  h2.section-head { display: flex; align-items: baseline; gap: 0.75rem; font-family: ui-monospace, "JetBrains Mono", "Fira Code", "SFMono-Regular", Menlo, Consolas, monospace; font-size: 1.0625rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ember); margin: 0 0 1.25rem; }
+  h2.section-head::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+  h3.sub-head { font-family: ui-monospace, "JetBrains Mono", "Fira Code", "SFMono-Regular", Menlo, Consolas, monospace; font-size: 0.9375rem; font-weight: 700; margin: 2rem 0 0.75rem; }
+  p { margin: 0 0 1rem; }
+  .lede { font-size: 1.0625rem; color: var(--ink-soft); }
+
+  .table-wrap { overflow-x: auto; border: 1px solid var(--border); margin-bottom: 1.25rem; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.875rem; }
+  table.wide { min-width: 720px; }
+  thead th { background: var(--surface); text-align: left; font-family: ui-monospace, "JetBrains Mono", "Fira Code", "SFMono-Regular", Menlo, Consolas, monospace; font-size: 0.6875rem; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-soft); padding: 0.55rem 0.75rem; border-bottom: 1px solid var(--ember); white-space: nowrap; }
+  tbody td { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border-soft); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: none; }
+  td.num, th.num { font-family: ui-monospace, "JetBrains Mono", "Fira Code", "SFMono-Regular", Menlo, Consolas, monospace; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  td.dot { text-align: center; }
+  .dot-on { color: var(--ember); }
+  .dot-off { color: var(--border); }
+  tbody tr:hover td { background: var(--surface-2); }
+
+  .formula { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--ember); padding: 1rem 1.2rem; margin-bottom: 1rem; font-family: ui-monospace, "JetBrains Mono", "Fira Code", "SFMono-Regular", Menlo, Consolas, monospace; font-size: 0.875rem; overflow-x: auto; white-space: pre; }
+  .formula .comment { color: var(--ink-soft); }
+
+  .outcome-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 0.5rem; }
+  @media (max-width: 520px) { .outcome-grid { grid-template-columns: 1fr; } }
+  .outcome { border: 1px solid var(--border); border-top: 3px solid var(--moss); padding: 0.9rem 1rem; }
+  .outcome.lose { border-top-color: var(--blood); }
+  .outcome .k { font-family: ui-monospace, "JetBrains Mono", "Fira Code", "SFMono-Regular", Menlo, Consolas, monospace; font-size: 0.6875rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--moss); display: block; margin-bottom: 0.4rem; }
+  .outcome.lose .k { color: var(--blood); }
+  .outcome p { margin: 0; font-size: 0.9rem; color: var(--ink-soft); }
+
+  footer { max-width: 760px; margin: 0 auto; padding: 1.5rem 1.5rem 3rem; border-top: 1px solid var(--border); font-size: 0.8125rem; color: var(--ink-soft); }
+
+  @media (prefers-reduced-motion: no-preference) { a, tbody tr td { transition: color 0.15s ease, background-color 0.15s ease; } }
+</style>
+
+<header class="banner">
+  <div class="banner-inner">
+    <p class="prompt-line"><span class="caret">$</span> python main.py — 26 levels, one amulet, no reloads</p>
+    <h1 class="title">rogi<span class="amulet">.</span>ruleset</h1>
+    <p class="subtitle">One of three pages on a terminal recreation of MS-DOS <em>Rogue</em>, in Python and curses. This page: mechanics as actually implemented, including the full A–Z bestiary.</p>
+    <p class="source-note">Source: <a href="https://github.com/cndrbrbr/rogi" target="_blank" rel="noopener">github.com/cndrbrbr/rogi</a> — Python, curses, ~1,130 lines.</p>
+  </div>
+</header>
+
+<nav class="series" aria-label="Series navigation">
+  <div class="series-inner">
+    <a href="./features.html">Features</a>
+    <span class="current">Ruleset</span>
+    <a href="./roadmap.html">Roadmap</a>
+  </div>
+</nav>
+
+<nav class="toc" aria-label="Section navigation">
+  <div class="toc-inner">
+    <a href="#stats">Core stats</a>
+    <a href="#combat">Combat</a>
+    <a href="#items">Items</a>
+    <a href="#effects">Status effects</a>
+    <a href="#outcomes">Win / lose</a>
+    <a href="#bestiary">Bestiary</a>
+  </div>
+</nav>
+
+<main>
+  <section id="stats">
+    <h2 class="section-head">Core stats</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Stat</th><th class="num">Value</th></tr></thead>
+        <tbody>
+          <tr><td>Start HP</td><td class="num">12</td></tr>
+          <tr><td>Start Strength</td><td class="num">16</td></tr>
+          <tr><td>Start Hunger</td><td class="num">2000</td></tr>
+          <tr><td>"Hungry" warning</td><td class="num">≤ 300</td></tr>
+          <tr><td>"Weak" warning</td><td class="num">≤ 150</td></tr>
+          <tr><td>Starvation damage interval</td><td class="num">every 3 turns</td></tr>
+          <tr><td>Natural regen interval</td><td class="num">every 20 turns</td></tr>
+          <tr><td>XP to next level</td><td class="num">level² × 15</td></tr>
+          <tr><td>HP gained per level</td><td class="num">1d8</td></tr>
+          <tr><td>Max depth</td><td class="num">26</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="combat">
+    <h2 class="section-head">Combat</h2>
+    <div class="formula"><span class="comment"># hit chance, clamped 5–95%</span>
+hit% = 45 + atk_bonus × 5 − defender_AC × 4
+
+<span class="comment"># damage on a hit, minimum 1</span>
+dmg  = max(1, roll(weapon_dice) + (STR − 16) ÷ 3)
+
+<span class="comment"># player attack bonus</span>
+atk_bonus = character_level + weapon_plus</div>
+    <p>Armor AC is <code class="mono">base_ac − armor_plus</code> — lower is better, matching the original's inverted AC direction. Bare-handed damage is <code class="mono">1d3</code>.</p>
+  </section>
+
+  <section id="items">
+    <h2 class="section-head">Items</h2>
+    <h3 class="sub-head">Drop odds</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Roll</th><th class="num">Odds</th></tr></thead>
+        <tbody>
+          <tr><td>Weapon</td><td class="num">28%</td></tr>
+          <tr><td>Armor</td><td class="num">18%</td></tr>
+          <tr><td>Potion</td><td class="num">22%</td></tr>
+          <tr><td>Scroll</td><td class="num">18%</td></tr>
+          <tr><td>Food</td><td class="num">8%</td></tr>
+          <tr><td>Gold</td><td class="num">6%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>20% of dropped weapons and armor carry a random enchantment (<code class="mono">−1, +1, +1, +2</code>) and spawn unidentified. Gold quantity is <code class="mono">2d10 × dungeon depth</code>. Potion colors and scroll titles are shuffled fresh each game.</p>
+  </section>
+
+  <section id="effects">
+    <h2 class="section-head">Status effects</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Source</th><th>Effect</th><th class="num">Duration / result</th></tr></thead>
+        <tbody>
+          <tr><td>Potion of Confusion</td><td>Confused</td><td class="num">1d10+10 turns</td></tr>
+          <tr><td>Potion of Blindness</td><td>Blind</td><td class="num">1d10+10 turns</td></tr>
+          <tr><td>Potion of Paralysis</td><td>Paralyzed</td><td class="num">1d6+3 turns</td></tr>
+          <tr><td>Scroll of Sleep</td><td>Paralyzed</td><td class="num">1d10+5 turns</td></tr>
+          <tr><td>Scroll of Scare Monster</td><td>Sleeps monsters within 3 tiles</td><td class="num">—</td></tr>
+          <tr><td>Scroll of Aggravate Monsters</td><td>Wakes every monster on the level</td><td class="num">—</td></tr>
+          <tr><td>Potion / Scroll of Detect / Mapping</td><td>Reveals monster tiles or full layout</td><td class="num">—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="outcomes">
+    <h2 class="section-head">Win &amp; lose</h2>
+    <div class="outcome-grid">
+      <div class="outcome win"><span class="k">Win</span><p>Carry the Amulet of Yendor from wherever it's found back up to dungeon level 1.</p></div>
+      <div class="outcome lose"><span class="k">Lose</span><p>HP reaches 0, from combat or starvation. Permadeath — the save file is deleted immediately.</p></div>
+    </div>
+  </section>
+
+  <section id="bestiary">
+    <h2 class="section-head">Bestiary</h2>
+    <p>All 26 species, A to Z, from <code class="mono">rogue/monsters_data.py</code>. <span class="dot-on">●</span> marks the trait as active for that species.</p>
+    <div class="table-wrap">
+      <table class="wide">
+        <thead>
+          <tr><th>Ltr</th><th>Name</th><th class="num">HP dice</th><th class="num">Atk dice</th><th class="num">AC</th><th class="num">Atk bonus</th><th class="num">XP</th><th class="num">Mean</th><th class="num">Erratic</th><th class="num">Stationary</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="num">A</td><td>Aquator</td><td class="num">3d8</td><td class="num">1d2</td><td class="num">2</td><td class="num">3</td><td class="num">20</td><td class="dot dot-off">○</td><td class="dot dot-off">○</td><td class="dot dot-off">○</td></tr>
+          <tr><td class="num">B</td><td>Bat</td><td class="num">1d8</td><td class="num">1d2</td><td class="num">8</td><td class="num">1</td><td class="num">2</td><td class="dot dot-off">○</td><td class="dot dot-on">●</td><td class="dot dot-off">○</td></tr>
+          <tr><td class="num">C</td><td>Centaur</td><td class="num">4d8</td><td class="num">1d6</td><td class="num">4</td><td class="num">4</td><td class="num">25</td><td class="dot dot-off">○</td><td class="dot dot-off">○</td><td class="dot dot-off">○</td></tr>
+          <tr><td class="num">D</td><td>Dragon</td><td class="num">10d8</td><td class="num">3d10</td><td class="num">−1</td><td class="num">9</td><td class="num">5000</td><td class="dot dot-on">●</td><td class="dot dot-off">○</td><td class="dot dot-off">○</td></tr>
+          <tr><td class="num">E</td><td>Emu</td><td class="num">1d8</td><td class="num">1d2</td><td class="num">7</td><td class="num">1</td><td class="num">2</td><td class="dot dot-on">●</td><td class="dot dot-off">○</td><td class="dot dot-off">○</td></tr>
+          <tr><td class="num">F</td><td>Flytrap</td><td class="num">8d8</td><td class="num">1d2</td><td class="num">3</td><td class="num">3</td><td class="num">80</td><td class="dot dot-on">●</td><td class="dot dot-off">○</td><td class="dot dot-on">●</td></tr>
+          <tr><td class="num">G</td><td>Gnome</td><td class="num">1d8</td><td class="num">1d6</td><td class="num">5</td><td class="num">2</td><td class="num">8</td><td class="dot dot-off">○</td><td class="dot dot-off">○</td><td class="dot dot-off">○</td></tr>
+          <tr><td class="num">H</td><td>Hobgoblin</td><td class="num">1d8</td><td class="num">1d8</td><td class="num">5</td><td class="num">3</td><td class="num">3</td><td class="dot dot-on">●</td><td class="dot dot-off">○</td><td class="dot dot-off">○</td></tr>
+          <tr><td class="num">I</td><td>Icky Thing</td><td class="num">1d8</td><td class="num">1d2</td><td class="num">9</td><td class="num">1</td><td class="num">1</td><td class="dot dot-off">○</td><td class="dot dot-on">●</td><td class="dot dot-off">○</td></tr>
+          <tr><td class="num">J</td><td>Jackal</td><td class="num">1d8</td><td class="num">1d2</td><td class="num">7</td><td class="num">1</td><td class="num">2</td><td class="dot dot-on">●</td><td class="dot dot-off">○</td><td class="dot dot-off">○</td></tr>
+          <tr><td class="num">K</td><td>Kobold</td><td class="num">1d8</td><td class="num">1d4</td><td class="num">7</td><td class="num">2</td><td class="num">1</td><td class="dot dot-on">●</td><td class="dot dot-off">○</td><td class="dot dot-off">○</td></tr>
+          <tr><td class="num">L</td><td>Leprechaun</td><td class="num">3d8</td><td class="num">1d1</td><td class="num">8</td><td class="num">2</td><td class="num">10</td><td class="dot dot-off">○</td><td class="dot dot-on">●</td><td class="dot dot-off">○</td></tr>
+          <tr><td class="num">M</td><td>Medusa</td><td class="num">8d8</td><td class="num">3d4</td><td class="num">2</td><td class="num">6</td><td class="num">200</td><td class="dot dot-on">●</td><td class="dot dot-off">○</td><td class="dot dot-off">○</td></tr>
+          <tr><td class="num">N</td><td>Nymph</td><td class="num">3d8</td><td class="num">1d1</td><td class="num">9</td><td class="num">0</td><td class="num">37</td><td class="dot dot-off">○</td><td class="dot dot-on">●</td><td class="dot dot-off">○</td></tr>
+          <tr><td class="num">O</td><td>Orc</td><td class="num">1d8</td><td class="num">1d8</td><td class="num">6</td><td class="num">3</td><td class="num">5</td><td class="dot dot-on">●</td><td class="dot dot-off">○</td><td class="dot dot-off">○</td></tr>
+          <tr><td class="num">P</td><td>Phantom</td><td class="num">8d8</td><td class="num">4d4</td><td class="num">3</td><td class="num">5</td><td class="num">120</td><td class="dot dot-on">●</td><td class="dot dot-on">●</td><td class="dot dot-off">○</td></tr>
+          <tr><td class="num">Q</td><td>Quagga</td><td class="num">3d8</td><td class="num">1d5</td><td class="num">3</td><td class="num">4</td><td class="num">15</td><td class="dot dot-on">●</td><td class="dot dot-off">○</td><td class="dot dot-off">○</td></tr>
+          <tr><td class="num">R</td><td>Rattlesnake</td><td class="num">2d8</td><td class="num">1d3</td><td class="num">3</td><td class="num">3</td><td class="num">9</td><td class="dot dot-on">●</td><td class="dot dot-off">○</td><td class="dot dot-off">○</td></tr>
+          <tr><td class="num">S</td><td>Spider</td><td class="num">2d8</td><td class="num">1d3</td><td class="num">4</td><td class="num">3</td><td class="num">20</td><td class="dot dot-on">●</td><td class="dot dot-on">●</td><td class="dot dot-off">○</td></tr>
+          <tr><td class="num">T</td><td>Troll</td><td class="num">6d8</td><td class="num">4d6</td><td class="num">4</td><td class="num">6</td><td class="num">120</td><td class="dot dot-on">●</td><td class="dot dot-off">○</td><td class="dot dot-off">○</td></tr>
+          <tr><td class="num">U</td><td>Ur-Vile</td><td class="num">7d8</td><td class="num">3d6</td><td class="num">2</td><td class="num">6</td><td class="num">190</td><td class="dot dot-on">●</td><td class="dot dot-on">●</td><td class="dot dot-off">○</td></tr>
+          <tr><td class="num">V</td><td>Vampire</td><td class="num">8d8</td><td class="num">3d6</td><td class="num">1</td><td class="num">7</td><td class="num">350</td><td class="dot dot-on">●</td><td class="dot dot-off">○</td><td class="dot dot-off">○</td></tr>
+          <tr><td class="num">W</td><td>Wraith</td><td class="num">5d8</td><td class="num">1d6</td><td class="num">4</td><td class="num">5</td><td class="num">55</td><td class="dot dot-on">●</td><td class="dot dot-off">○</td><td class="dot dot-off">○</td></tr>
+          <tr><td class="num">X</td><td>Xorn</td><td class="num">7d8</td><td class="num">3d4</td><td class="num">0</td><td class="num">6</td><td class="num">100</td><td class="dot dot-on">●</td><td class="dot dot-off">○</td><td class="dot dot-off">○</td></tr>
+          <tr><td class="num">Y</td><td>Yeti</td><td class="num">4d8</td><td class="num">2d6</td><td class="num">6</td><td class="num">4</td><td class="num">50</td><td class="dot dot-on">●</td><td class="dot dot-off">○</td><td class="dot dot-off">○</td></tr>
+          <tr><td class="num">Z</td><td>Zombie</td><td class="num">2d8</td><td class="num">2d3</td><td class="num">8</td><td class="num">2</td><td class="num">6</td><td class="dot dot-on">●</td><td class="dot dot-off">○</td><td class="dot dot-off">○</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<footer>
+  Part of a three-page series on <a href="https://github.com/cndrbrbr/rogi" target="_blank" rel="noopener">cndrbrbr/rogi</a>, compiled 2026-08-15. See also: <a href="./features.html">Features</a> · <a href="./roadmap.html">Roadmap</a>.
+</footer>
