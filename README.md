@@ -4,6 +4,15 @@ A small terminal rogue game — a from-scratch recreation of the classic MS-DOS 
 
 ![rogi gameplay screenshot](rogi.png)
 
+## Contents
+
+- [Docs](#docs)
+- [Running it](#running-it)
+- [Controls](#controls)
+- [Goal](#goal)
+- [The dog](#the-dog)
+- [Implementation notes](#implementation-notes)
+
 ## Docs
 
 - [Features](docs/features.md) — everything the game does
