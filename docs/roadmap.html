@@ -1,0 +1,115 @@
+<title>rogi Roadmap</title>
+<style>
+  :root {
+    --bg: #e7e0d0;
+    --surface: #ddd4bf;
+    --surface-2: #d3c8ad;
+    --ink: #211b12;
+    --ink-soft: #56503e;
+    --ember: #a2531a;
+    --ember-strong: #8a4514;
+    --moss: #3f5b36;
+    --blood: #833131;
+    --border: #c3b795;
+    --border-soft: #d3c8ad;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17130d; --surface: #211b12; --surface-2: #2a2317;
+      --ink: #ece4d0; --ink-soft: #b3a98d;
+      --ember: #e2894a; --ember-strong: #f0a367;
+      --moss: #8bab7c; --blood: #d97575;
+      --border: #3d3524; --border-soft: #2a2317;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #17130d; --surface: #211b12; --surface-2: #2a2317;
+    --ink: #ece4d0; --ink-soft: #b3a98d;
+    --ember: #e2894a; --ember-strong: #f0a367;
+    --moss: #8bab7c; --blood: #d97575;
+    --border: #3d3524; --border-soft: #2a2317;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, "Noto Serif", serif;
+    font-size: 1rem; line-height: 1.65; -webkit-font-smoothing: antialiased;
+  }
+  .mono { font-family: ui-monospace, "JetBrains Mono", "Fira Code", "SFMono-Regular", Menlo, Consolas, monospace; }
+  a { color: var(--ember-strong); }
+  a:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
+
+  header.banner { background: var(--surface); border-bottom: 1px solid var(--border); padding: 2.75rem 1.5rem 2rem; }
+  .banner-inner { max-width: 760px; margin: 0 auto; }
+  .prompt-line { font-family: ui-monospace, "JetBrains Mono", "Fira Code", "SFMono-Regular", Menlo, Consolas, monospace; font-size: 0.8125rem; color: var(--ink-soft); letter-spacing: 0.02em; margin: 0 0 1rem; }
+  .prompt-line .caret { color: var(--moss); }
+  h1.title { font-family: ui-monospace, "JetBrains Mono", "Fira Code", "SFMono-Regular", Menlo, Consolas, monospace; font-weight: 700; font-size: clamp(2.1rem, 6vw, 3rem); letter-spacing: 0.02em; margin: 0 0 0.6rem; text-wrap: balance; }
+  h1.title .amulet { color: var(--ember); }
+  p.subtitle { margin: 0 0 1.5rem; max-width: 60ch; font-size: 1.0625rem; color: var(--ink-soft); }
+  .source-note { margin-top: 1.25rem; font-size: 0.8125rem; color: var(--ink-soft); }
+  .source-note a { color: var(--ink-soft); text-decoration-color: var(--border); }
+
+  nav.series { position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 1px solid var(--border); }
+  .series-inner { max-width: 760px; margin: 0 auto; padding: 0.7rem 1.5rem; display: flex; flex-wrap: wrap; gap: 0.4rem 0; font-family: ui-monospace, "JetBrains Mono", "Fira Code", "SFMono-Regular", Menlo, Consolas, monospace; font-size: 0.8125rem; }
+  .series-inner a, .series-inner span.current { text-decoration: none; padding: 0.15rem 0.7rem; border-right: 1px solid var(--border-soft); letter-spacing: 0.03em; }
+  .series-inner a { color: var(--ink-soft); }
+  .series-inner a:hover { color: var(--ember); }
+  .series-inner span.current { color: var(--ember); font-weight: 700; }
+  .series-inner a:last-child, .series-inner span.current:last-child { border-right: none; }
+
+  main { max-width: 760px; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
+  h2.section-head { display: flex; align-items: baseline; gap: 0.75rem; font-family: ui-monospace, "JetBrains Mono", "Fira Code", "SFMono-Regular", Menlo, Consolas, monospace; font-size: 1.0625rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ember); margin: 0 0 1.25rem; }
+  h2.section-head::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+  p { margin: 0 0 1rem; }
+  .lede { font-size: 1.0625rem; color: var(--ink-soft); }
+
+  ol.roadmap { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.9rem; }
+  ol.roadmap li { display: grid; grid-template-columns: 2.2rem 1fr; gap: 0.9rem; border-left: 2px solid var(--border); padding: 0.1rem 0 0.1rem 1rem; }
+  ol.roadmap li .idx { font-family: ui-monospace, "JetBrains Mono", "Fira Code", "SFMono-Regular", Menlo, Consolas, monospace; font-weight: 700; color: var(--ember); font-variant-numeric: tabular-nums; }
+  ol.roadmap li h4 { margin: 0 0 0.25rem; font-size: 0.9375rem; }
+  ol.roadmap li p { margin: 0; font-size: 0.875rem; color: var(--ink-soft); }
+
+  footer { max-width: 760px; margin: 0 auto; padding: 1.5rem 1.5rem 3rem; border-top: 1px solid var(--border); font-size: 0.8125rem; color: var(--ink-soft); }
+
+  @media (prefers-reduced-motion: no-preference) { a { transition: color 0.15s ease; } }
+</style>
+
+<header class="banner">
+  <div class="banner-inner">
+    <p class="prompt-line"><span class="caret">$</span> python main.py — 26 levels, one amulet, no reloads</p>
+    <h1 class="title">rogi<span class="amulet">.</span>roadmap</h1>
+    <p class="subtitle">One of three pages on a terminal recreation of MS-DOS <em>Rogue</em>, in Python and curses. This page: what's missing, ranked by how much it'd change play.</p>
+    <p class="source-note">Source: <a href="https://github.com/cndrbrbr/rogi" target="_blank" rel="noopener">github.com/cndrbrbr/rogi</a> — Python, curses, ~1,130 lines.</p>
+  </div>
+</header>
+
+<nav class="series" aria-label="Series navigation">
+  <div class="series-inner">
+    <a href="https://claude.ai/code/artifact/24b9eb7c-61be-40ae-9cb7-7b1484c1ce04">Features</a>
+    <a href="https://claude.ai/code/artifact/a2328ed1-ccb0-4619-be8a-bd1ed765af8d">Ruleset</a>
+    <span class="current">Roadmap</span>
+  </div>
+</nav>
+
+<main>
+  <section id="roadmap">
+    <h2 class="section-head">Roadmap</h2>
+    <p class="lede">Gaps against the classic <em>Rogue</em> feature set and the current code. The codebase itself has no open <code class="mono">TODO</code> markers — these are external observations, not in-repo notes.</p>
+    <ol class="roadmap">
+      <li><span class="idx">01</span><div><h4>Traps</h4><p>No trap tiles (dart, teleport, pit, etc.) exist in <code class="mono">dungeon.py</code> — a core classic-Rogue hazard is entirely absent.</p></div></li>
+      <li><span class="idx">02</span><div><h4>Wands &amp; staffs</h4><p>A fourth item category from the original is missing; only weapon/armor/potion/scroll/food/gold exist.</p></div></li>
+      <li><span class="idx">03</span><div><h4>Rings</h4><p>No ring equipment slot or ring-of-* effects.</p></div></li>
+      <li><span class="idx">04</span><div><h4>Cursed items</h4><p>Enchantment values can go negative, but nothing stops a cursed weapon or armor from being removed once worn.</p></div></li>
+      <li><span class="idx">05</span><div><h4>Combat-table fidelity</h4><p>The README already flags the to-hit formula as a simplified stand-in for the original's exact tables — worth a call on whether closer fidelity matters for the project's goals.</p></div></li>
+      <li><span class="idx">06</span><div><h4>Monster special abilities</h4><p>Species like Rattlesnake (poison bite), Vampire (drain), Leprechaun (steal gold and flee), and Nymph (steal item and teleport) exist by name and stats only; confirm whether special-attack behavior is implemented elsewhere, and add it if not.</p></div></li>
+      <li><span class="idx">07</span><div><h4>Difficulty tuning</h4><p>No playtesting notes found. The XP curve and depth-weighted spawn selection (<code class="mono">_pick_species_index</code>) would benefit from a documented tuning pass.</p></div></li>
+      <li><span class="idx">08</span><div><h4>Automated tests</h4><p>No <code class="mono">tests/</code> directory. Dice rolls, hit-chance clamping, and hunger thresholds are strong candidates for unit tests.</p></div></li>
+      <li><span class="idx">09</span><div><h4>Packaging</h4><p><code class="mono">windows-curses</code> is a manual install step in the README — could move into a <code class="mono">requirements.txt</code> or <code class="mono">pyproject.toml</code>.</p></div></li>
+      <li><span class="idx">10</span><div><h4>Screenshot freshness</h4><p><code class="mono">rogi.png</code> should be checked against the current UI periodically — screenshots drift from code over time.</p></div></li>
+    </ol>
+  </section>
+</main>
+
+<footer>
+  Part of a three-page series on <a href="https://github.com/cndrbrbr/rogi" target="_blank" rel="noopener">cndrbrbr/rogi</a>, compiled 2026-08-15. Not affiliated with the project's author. See also: <a href="https://claude.ai/code/artifact/24b9eb7c-61be-40ae-9cb7-7b1484c1ce04">Features</a> · <a href="https://claude.ai/code/artifact/a2328ed1-ccb0-4619-be8a-bd1ed765af8d">Ruleset</a>.
+</footer>
