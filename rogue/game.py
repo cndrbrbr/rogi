@@ -520,7 +520,25 @@ class Game:
             return
 
         if max(abs(dog.x - p.x), abs(dog.y - p.y)) <= 1:
+            candidates = []
+            for ddx in (-1, 0, 1):
+                for ddy in (-1, 0, 1):
+                    if ddx == 0 and ddy == 0:
+                        continue
+                    nx, ny = dog.x + ddx, dog.y + ddy
+                    if max(abs(nx - p.x), abs(ny - p.y)) > 1:
+                        continue
+                    if (nx, ny) == (p.x, p.y):
+                        continue
+                    if not self.level.is_walkable(nx, ny):
+                        continue
+                    if self.monster_at(nx, ny) is not None:
+                        continue
+                    candidates.append((nx, ny))
+            if candidates:
+                dog.x, dog.y = random.choice(candidates)
             return
+
         dx = 0 if dog.x == p.x else (1 if p.x > dog.x else -1)
         dy = 0 if dog.y == p.y else (1 if p.y > dog.y else -1)
         nx, ny = dog.x + dx, dog.y + dy
