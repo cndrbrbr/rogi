@@ -67,6 +67,10 @@ Spawns next to you at game start and follows you (including through stairs). Whi
 
 One species per letter A–Z, danger scaling roughly with letter, with spawn selection (`Game._pick_species_index`) weighting toward species near the current dungeon depth. Full table in the [Ruleset](ruleset.md#bestiary). (`rogue/monsters_data.py`)
 
+## Monster special abilities
+
+Six species do something beyond generic damage: the Aquator corrodes your armor, the Leprechaun steals gold and flees, the Nymph steals an item and flees, the Rattlesnake can drain Strength, the Troll slowly regenerates, and the Vampire heals off the damage it deals to you. See [Ruleset](ruleset.md#monster-special-abilities) for exact odds.
+
 ## Permadeath, one save slot
 
 `Game.save()`/`Game.load()` pickle the whole game state to `save.dat`. That file is deleted on both death and victory — there is no reloading past either.

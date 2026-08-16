@@ -122,7 +122,9 @@ class Monster:
         self.depth = depth
         self.confused_turns = 0
         self.asleep_turns = 0
+        self.special = species.get("special")
 
     def __setstate__(self, state):
         self.__dict__.update(state)
         self.__dict__.setdefault("asleep_turns", 0)
+        self.__dict__.setdefault("special", None)

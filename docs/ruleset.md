@@ -102,6 +102,21 @@ Six trap types, placed 1–3 per level (never on the stairs), hidden until sprun
 | Teleport | Moved to a random open tile on the level |
 | Trap door | Falls to the next dungeon level (no effect at max depth) |
 
+## Monster special abilities
+
+Six species carry an ability beyond their base stats, checked on every successful hit (or, for Troll, every turn regardless of combat):
+
+| Species | Ability |
+|---|---|
+| Aquator | Corrodes your worn armor by −1 on every hit |
+| Leprechaun | Steals gold instead of dealing damage, then teleports away |
+| Nymph | Steals a random item instead of dealing damage, then teleports away |
+| Rattlesnake | 50% chance to drain 1 Strength on a hit |
+| Troll | 50% chance to regenerate 1 HP every turn, awake or not |
+| Vampire | Heals itself for the damage it deals, up to its own max HP |
+
+Leprechaun and Nymph never take the Amulet, and never take a cursed item you can't remove anyway — they skip straight to "finds nothing to take" if that's all you're carrying.
+
 ## Win & lose
 
 **Win** — carry the Amulet of Yendor from wherever it's found back up to dungeon level 1.
@@ -112,34 +127,34 @@ Six trap types, placed 1–3 per level (never on the stairs), hidden until sprun
 
 All 26 species, A to Z, from `rogue/monsters_data.py`.
 
-| Ltr | Name | HP dice | Atk dice | AC | Atk bonus | XP | Mean | Erratic | Stationary |
-|---|---|---|---|---|---|---|---|---|---|
-| A | Aquator | 3d8 | 1d2 | 2 | 3 | 20 | | | |
-| B | Bat | 1d8 | 1d2 | 8 | 1 | 2 | | ✓ | |
-| C | Centaur | 4d8 | 1d6 | 4 | 4 | 25 | | | |
-| D | Dragon | 10d8 | 3d10 | −1 | 9 | 5000 | ✓ | | |
-| E | Emu | 1d8 | 1d2 | 7 | 1 | 2 | ✓ | | |
-| F | Flytrap | 8d8 | 1d2 | 3 | 3 | 80 | ✓ | | ✓ |
-| G | Gnome | 1d8 | 1d6 | 5 | 2 | 8 | | | |
-| H | Hobgoblin | 1d8 | 1d8 | 5 | 3 | 3 | ✓ | | |
-| I | Icky Thing | 1d8 | 1d2 | 9 | 1 | 1 | | ✓ | |
-| J | Jackal | 1d8 | 1d2 | 7 | 1 | 2 | ✓ | | |
-| K | Kobold | 1d8 | 1d4 | 7 | 2 | 1 | ✓ | | |
-| L | Leprechaun | 3d8 | 1d1 | 8 | 2 | 10 | | ✓ | |
-| M | Medusa | 8d8 | 3d4 | 2 | 6 | 200 | ✓ | | |
-| N | Nymph | 3d8 | 1d1 | 9 | 0 | 37 | | ✓ | |
-| O | Orc | 1d8 | 1d8 | 6 | 3 | 5 | ✓ | | |
-| P | Phantom | 8d8 | 4d4 | 3 | 5 | 120 | ✓ | ✓ | |
-| Q | Quagga | 3d8 | 1d5 | 3 | 4 | 15 | ✓ | | |
-| R | Rattlesnake | 2d8 | 1d3 | 3 | 3 | 9 | ✓ | | |
-| S | Spider | 2d8 | 1d3 | 4 | 3 | 20 | ✓ | ✓ | |
-| T | Troll | 6d8 | 4d6 | 4 | 6 | 120 | ✓ | | |
-| U | Ur-Vile | 7d8 | 3d6 | 2 | 6 | 190 | ✓ | ✓ | |
-| V | Vampire | 8d8 | 3d6 | 1 | 7 | 350 | ✓ | | |
-| W | Wraith | 5d8 | 1d6 | 4 | 5 | 55 | ✓ | | |
-| X | Xorn | 7d8 | 3d4 | 0 | 6 | 100 | ✓ | | |
-| Y | Yeti | 4d8 | 2d6 | 6 | 4 | 50 | ✓ | | |
-| Z | Zombie | 2d8 | 2d3 | 8 | 2 | 6 | ✓ | | |
+| Ltr | Name | HP dice | Atk dice | AC | Atk bonus | XP | Mean | Erratic | Stationary | Ability |
+|---|---|---|---|---|---|---|---|---|---|---|
+| A | Aquator | 3d8 | 1d2 | 2 | 3 | 20 | | | | Rusts armor |
+| B | Bat | 1d8 | 1d2 | 8 | 1 | 2 | | ✓ | | |
+| C | Centaur | 4d8 | 1d6 | 4 | 4 | 25 | | | | |
+| D | Dragon | 10d8 | 3d10 | −1 | 9 | 5000 | ✓ | | | |
+| E | Emu | 1d8 | 1d2 | 7 | 1 | 2 | ✓ | | | |
+| F | Flytrap | 8d8 | 1d2 | 3 | 3 | 80 | ✓ | | ✓ | |
+| G | Gnome | 1d8 | 1d6 | 5 | 2 | 8 | | | | |
+| H | Hobgoblin | 1d8 | 1d8 | 5 | 3 | 3 | ✓ | | | |
+| I | Icky Thing | 1d8 | 1d2 | 9 | 1 | 1 | | ✓ | | |
+| J | Jackal | 1d8 | 1d2 | 7 | 1 | 2 | ✓ | | | |
+| K | Kobold | 1d8 | 1d4 | 7 | 2 | 1 | ✓ | | | |
+| L | Leprechaun | 3d8 | 1d1 | 8 | 2 | 10 | | ✓ | | Steals gold, flees |
+| M | Medusa | 8d8 | 3d4 | 2 | 6 | 200 | ✓ | | | |
+| N | Nymph | 3d8 | 1d1 | 9 | 0 | 37 | | ✓ | | Steals item, flees |
+| O | Orc | 1d8 | 1d8 | 6 | 3 | 5 | ✓ | | | |
+| P | Phantom | 8d8 | 4d4 | 3 | 5 | 120 | ✓ | ✓ | | |
+| Q | Quagga | 3d8 | 1d5 | 3 | 4 | 15 | ✓ | | | |
+| R | Rattlesnake | 2d8 | 1d3 | 3 | 3 | 9 | ✓ | | | Drains Strength |
+| S | Spider | 2d8 | 1d3 | 4 | 3 | 20 | ✓ | ✓ | | |
+| T | Troll | 6d8 | 4d6 | 4 | 6 | 120 | ✓ | | | Regenerates |
+| U | Ur-Vile | 7d8 | 3d6 | 2 | 6 | 190 | ✓ | ✓ | | |
+| V | Vampire | 8d8 | 3d6 | 1 | 7 | 350 | ✓ | | | Drains life |
+| W | Wraith | 5d8 | 1d6 | 4 | 5 | 55 | ✓ | | | |
+| X | Xorn | 7d8 | 3d4 | 0 | 6 | 100 | ✓ | | | |
+| Y | Yeti | 4d8 | 2d6 | 6 | 4 | 50 | ✓ | | | |
+| Z | Zombie | 2d8 | 2d3 | 8 | 2 | 6 | ✓ | | | |
 
 ---
 

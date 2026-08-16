@@ -667,6 +667,8 @@ class Game:
             if m.asleep_turns > 0:
                 m.asleep_turns -= 1
                 continue
+            if m.special == "regenerate" and m.hp < m.max_hp and random.random() < 0.5:
+                m.hp += 1
             if not m.awake:
                 if (m.x, m.y) in self.level.visible_from(p.x, p.y) and abs(m.x - p.x) + abs(m.y - p.y) <= 6:
                     if random.random() < 0.5:
@@ -761,12 +763,61 @@ class Game:
 
     def _monster_attacks(self, m):
         p = self.player
+        if m.special == "steal_gold":
+            self._steal_gold_and_flee(m)
+            return
+        if m.special == "steal_item":
+            self._steal_item_and_flee(m)
+            return
+
         hit, dmg = resolve_attack(m.atk_bonus, m.atk_dice, 0, p.ac)
-        if hit:
-            p.hp -= dmg
-            self.msg(f"The {m.name} hits you for {dmg}.")
-        else:
+        if not hit:
             self.msg(f"The {m.name} misses you.")
+            return
+        p.hp -= dmg
+        self.msg(f"The {m.name} hits you for {dmg}.")
+
+        if m.special == "rust_armor" and p.armor is not None:
+            p.armor.plus -= 1
+            self.msg(f"The {m.name}'s touch corrodes your {p.armor.base_name}!")
+        elif m.special == "drain_str" and random.random() < 0.5 and p.str > 3:
+            p.str -= 1
+            self.msg(f"The {m.name}'s bite weakens you!")
+        elif m.special == "drain_life":
+            heal = min(dmg, m.max_hp - m.hp)
+            if heal > 0:
+                m.hp += heal
+                self.msg(f"The {m.name} drains your life essence!")
+
+    def _steal_gold_and_flee(self, m):
+        p = self.player
+        if p.gold <= 0:
+            self.msg(f"The {m.name} searches you, but you have no gold.")
+        else:
+            stolen = min(p.gold, roll_dice("2d10") * max(1, p.depth))
+            p.gold -= stolen
+            self.msg(f"The {m.name} steals {stolen} gold and vanishes!")
+        m.x, m.y = self.level.random_open_tile()
+
+    def _steal_item_and_flee(self, m):
+        p = self.player
+        candidates = [
+            it for it in p.inventory
+            if it.kind != "amulet" and not (it.cursed and it in (p.weapon, p.armor, *p.rings))
+        ]
+        if not candidates:
+            self.msg(f"The {m.name} paws through your pack, but finds nothing to take.")
+        else:
+            item = random.choice(candidates)
+            p.inventory.remove(item)
+            if item is p.weapon:
+                p.weapon = None
+            if item is p.armor:
+                p.armor = None
+            if item in p.rings:
+                p.rings[p.rings.index(item)] = None
+            self.msg(f"The {m.name} snatches {item.display_name(self)} and vanishes!")
+        m.x, m.y = self.level.random_open_tile()
 
     # ---------- save/load ----------
 
