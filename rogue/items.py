@@ -69,6 +69,19 @@ WAND_MATERIALS = [
     "copper", "iron", "silver", "tin", "bone", "crystal",
 ]
 
+RING_KEYS = ["protection", "add_strength", "regeneration", "slow_digestion", "searching"]
+RING_NAMES = {
+    "protection": "Ring of Protection",
+    "add_strength": "Ring of Add Strength",
+    "regeneration": "Ring of Regeneration",
+    "slow_digestion": "Ring of Slow Digestion",
+    "searching": "Ring of Searching",
+}
+RING_STONES = [
+    "ruby", "sapphire", "emerald", "opal", "jade", "pearl",
+    "garnet", "topaz", "amethyst", "onyx", "moonstone", "obsidian",
+]
+
 FOODS = [
     dict(key="ration", name="Ration of Food", nutrition_dice="1d600+1500"),
     dict(key="mango", name="Mango Fruit", nutrition_dice="1d300+500"),
@@ -84,6 +97,10 @@ def make_appearance_maps():
     random.shuffle(materials)
     wand_map = {key: materials[i] for i, key in enumerate(WAND_KEYS)}
 
+    stones = RING_STONES[:]
+    random.shuffle(stones)
+    ring_map = {key: stones[i] for i, key in enumerate(RING_KEYS)}
+
     scroll_map = {}
     used_titles = set()
     for key in SCROLL_KEYS:
@@ -93,7 +110,7 @@ def make_appearance_maps():
                 used_titles.add(title)
                 scroll_map[key] = title
                 break
-    return potion_map, scroll_map, wand_map
+    return potion_map, scroll_map, wand_map, ring_map
 
 
 class Item:
@@ -102,7 +119,7 @@ class Item:
         self.key = key
         self.letter = letter
         self.plus = 0
-        self.identified = kind not in ("potion", "scroll", "wand")
+        self.identified = kind not in ("potion", "scroll", "wand", "ring")
         self.quantity = 1
 
         if kind == "weapon":
@@ -122,6 +139,10 @@ class Item:
         elif kind == "wand":
             self.base_name = WAND_NAMES[key]
             self.charges = random.randint(3, 7)
+        elif kind == "ring":
+            self.base_name = RING_NAMES[key]
+            if key in ("protection", "add_strength"):
+                self.plus = random.randint(1, 3)
         elif kind == "food":
             data = next(f for f in FOODS if f["key"] == key)
             self.base_name = data["name"]
@@ -148,6 +169,13 @@ class Item:
             if self.identified:
                 return f"{self.base_name} [{self.charges}]"
             return f"{game.wand_appearance[self.key]} wand"
+        if self.kind == "ring":
+            if not self.identified:
+                return f"{game.ring_appearance[self.key]} ring"
+            if self.key in ("protection", "add_strength"):
+                sign = f"+{self.plus}" if self.plus >= 0 else str(self.plus)
+                return f"{self.base_name} {sign}"
+            return self.base_name
         if self.kind == "food":
             return self.base_name
         if self.kind == "gold":
@@ -161,6 +189,7 @@ class Item:
             "potion": "!",
             "scroll": "?",
             "wand": "/",
+            "ring": "=",
             "food": "%",
             "gold": "*",
         }[self.kind]
@@ -168,27 +197,29 @@ class Item:
 
 def random_item(depth):
     roll = random.random()
-    if roll < 0.25:
+    if roll < 0.22:
         key = random.choice(WEAPONS)["key"]
         item = Item("weapon", key)
         if random.random() < 0.2:
             item.plus = random.choice([-1, 1, 1, 2])
             item.identified = False
         return item
-    if roll < 0.41:
+    if roll < 0.36:
         key = random.choice(ARMORS)["key"]
         item = Item("armor", key)
         if random.random() < 0.2:
             item.plus = random.choice([-1, 1, 1, 2])
             item.identified = False
         return item
-    if roll < 0.61:
+    if roll < 0.54:
         return Item("potion", random.choice(POTION_KEYS))
-    if roll < 0.77:
+    if roll < 0.68:
         return Item("scroll", random.choice(SCROLL_KEYS))
-    if roll < 0.87:
+    if roll < 0.77:
         return Item("wand", random.choice(WAND_KEYS))
-    if roll < 0.94:
+    if roll < 0.85:
+        return Item("ring", random.choice(RING_KEYS))
+    if roll < 0.93:
         return Item("food", random.choice(FOODS)["key"])
     item = Item("gold", "gold")
     from .combat import roll_dice

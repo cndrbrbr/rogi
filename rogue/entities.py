@@ -18,6 +18,7 @@ class Player:
         self.inventory = []  # list[Item]
         self.weapon = None
         self.armor = None
+        self.rings = [None, None]
         self.turn = 0
         self.confused_turns = 0
         self.blind_turns = 0
@@ -31,6 +32,9 @@ class Player:
         base = 10
         if self.armor:
             base = self.armor.base_ac - self.armor.plus
+        for ring in self.rings:
+            if ring is not None and ring.key == "protection":
+                base -= ring.plus
         return base
 
     def attack_bonus(self):
@@ -45,7 +49,11 @@ class Player:
         return "1d3"  # bare hands
 
     def damage_bonus(self):
-        return (self.str - 16) // 3
+        bonus_str = self.str
+        for ring in self.rings:
+            if ring is not None and ring.key == "add_strength":
+                bonus_str += ring.plus
+        return (bonus_str - 16) // 3
 
     def next_level_exp(self):
         return self.level * self.level * 15
@@ -67,6 +75,10 @@ class Player:
             if ch not in used:
                 return ch
         return None
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        self.__dict__.setdefault("rings", [None, None])
 
 
 class Dog:
@@ -110,3 +122,7 @@ class Monster:
         self.depth = depth
         self.confused_turns = 0
         self.asleep_turns = 0
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        self.__dict__.setdefault("asleep_turns", 0)

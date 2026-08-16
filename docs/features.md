@@ -13,6 +13,7 @@ The codebase is complete as of this writing — no stub functions, no `TODO` mar
 | **Weapons** | 6 |
 | **Armors** | 8 |
 | **Wands** | 5 |
+| **Rings** | 5 |
 
 ## Procedural dungeons
 
@@ -41,6 +42,10 @@ Nine potion effects, eight scroll effects. Colors and titles are shuffled onto e
 ## Wands
 
 Five effects (striking, confusion, sleep, teleport away, polymorph) covering both "wands" and "staffs" as one unified item kind, each with random charges and a hidden material name until zapped. Press `z`, pick a wand, then a direction — the bolt hits the first monster in a straight line. See [Ruleset](ruleset.md#wands) for the full effect table.
+
+## Rings
+
+Five passive effects, two worn at once (protection, add strength, regeneration, slow digestion, searching), identified by wearing them. Put on with `P`, remove with `R`. See [Ruleset](ruleset.md#rings) for the full effect table.
 
 ## Traps
 

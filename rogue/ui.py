@@ -181,6 +181,28 @@ def choose_item(stdscr, game, kind, verb):
                 return it.letter
 
 
+def choose_worn_ring(stdscr, game):
+    p = game.player
+    matches = [it for it in p.rings if it is not None]
+    if not matches:
+        prompt(stdscr, "You aren't wearing any rings. (press a key)")
+        stdscr.refresh()
+        stdscr.getch()
+        return None
+    stdscr.erase()
+    _addch_safe(stdscr, 0, 0, "Remove which ring?")
+    for i, it in enumerate(matches):
+        _addch_safe(stdscr, i + 1, 0, f"{it.letter}) {it.display_name(game)}")
+    stdscr.refresh()
+    while True:
+        key = read_key(stdscr)
+        if key == chr(27):
+            return None
+        for it in matches:
+            if key == it.letter:
+                return it.letter
+
+
 def show_inventory(stdscr, game):
     p = game.player
     stdscr.erase()
@@ -193,6 +215,8 @@ def show_inventory(stdscr, game):
             if it is p.weapon:
                 tag = " (wielded)"
             elif it is p.armor:
+                tag = " (worn)"
+            elif it in p.rings:
                 tag = " (worn)"
             _addch_safe(stdscr, i + 1, 0, f"{it.letter}) {it.display_name(game)}{tag}")
         _addch_safe(stdscr, len(p.inventory) + 2, 0, "(press a key to continue)")
@@ -208,6 +232,7 @@ HELP_TEXT = [
     "q  quaff a potion      r  read a scroll",
     "e  eat food            d  drop an item",
     "z  zap a wand (then pick a direction)",
+    "P  put on a ring       R  remove a ring (max two worn at once)",
     ">  go down stairs      <  go up stairs",
     "s  search / wait       ?  this help screen",
     "Q  quit the game",
@@ -342,6 +367,16 @@ def run(stdscr):
             letter = choose_item(stdscr, game, "food", "eat")
             if letter:
                 game.use_item(letter, "eat")
+            continue
+        if key == "P":
+            letter = choose_item(stdscr, game, "ring", "put on")
+            if letter:
+                game.use_item(letter, "put_on")
+            continue
+        if key == "R":
+            letter = choose_worn_ring(stdscr, game)
+            if letter:
+                game.use_item(letter, "remove_ring")
             continue
         if key == "d":
             letter = choose_item(stdscr, game, None, "drop")

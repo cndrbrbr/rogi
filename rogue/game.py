@@ -29,13 +29,20 @@ class Game:
         self.player = Player()
         self.levels = {}
         self.messages = []
-        self.potion_appearance, self.scroll_appearance, self.wand_appearance = items_mod.make_appearance_maps()
+        self.potion_appearance, self.scroll_appearance, self.wand_appearance, self.ring_appearance = \
+            items_mod.make_appearance_maps()
         self.turn_count = 0
         self.finished = False
         self.win = False
         self.end_reason = ""
         self.dog = None
         self._last_player_pos = None
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        self.__dict__.setdefault("_last_player_pos", None)
+        self.__dict__.setdefault("wand_appearance", {})
+        self.__dict__.setdefault("ring_appearance", {})
 
     # ---------- setup ----------
 
@@ -390,8 +397,29 @@ class Game:
             p.hunger = min(cfg.START_HUNGER, p.hunger + gained)
             self.msg(f"You eat the {item.display_name(self)}. Yum.")
             p.inventory.remove(item)
+        elif action == "put_on":
+            if item.kind != "ring":
+                self.msg("You can't wear that on your finger.")
+                return False
+            if item in p.rings:
+                self.msg("You're already wearing that ring.")
+                return False
+            if None not in p.rings:
+                self.msg("You're already wearing two rings.")
+                return False
+            p.rings[p.rings.index(None)] = item
+            item.identified = True
+            self.msg(f"You put on {item.display_name(self)}.")
+        elif action == "remove_ring":
+            if item not in p.rings:
+                self.msg("You're not wearing that ring.")
+                return False
+            p.rings[p.rings.index(item)] = None
+            self.msg(f"You remove {item.display_name(self)}.")
         elif action == "drop":
             p.inventory.remove(item)
+            if item in p.rings:
+                p.rings[p.rings.index(item)] = None
             if item.kind == "food" and self.dog is not None and \
                     max(abs(self.dog.x - p.x), abs(self.dog.y - p.y)) <= 1:
                 grew = self.dog.feed()
@@ -557,6 +585,9 @@ class Game:
 
     # ---------- end of turn ----------
 
+    def _wearing_ring(self, key):
+        return any(r is not None and r.key == key for r in self.player.rings)
+
     def _end_turn(self):
         p = self.player
         self.turn_count += 1
@@ -567,7 +598,10 @@ class Game:
         if p.blind_turns > 0:
             p.blind_turns -= 1
 
-        p.hunger -= 1
+        hunger_cost = 1
+        if self._wearing_ring("slow_digestion") and p.turn % 2 == 0:
+            hunger_cost = 0
+        p.hunger -= hunger_cost
         if p.hunger == cfg.HUNGRY_AT:
             self.msg("You are starting to feel hungry.")
         elif p.hunger == cfg.WEAK_AT:
@@ -577,8 +611,12 @@ class Game:
                 p.hp -= 1
                 self.msg("You are starving!")
 
-        if p.turn % cfg.REGEN_TURNS == 0 and p.hp < p.max_hp and p.hunger > 0:
+        regen_interval = cfg.REGEN_TURNS // 2 if self._wearing_ring("regeneration") else cfg.REGEN_TURNS
+        if p.turn % regen_interval == 0 and p.hp < p.max_hp and p.hunger > 0:
             p.hp += 1
+
+        if self._wearing_ring("searching"):
+            self._search()
 
         self._monsters_turn()
         self._dog_turn()
@@ -650,7 +688,7 @@ class Game:
                 self.msg(f"{dog.name} misses the {adjacent_monster.name}.")
             return
 
-        prev_pos = getattr(self, "_last_player_pos", None) or (p.x, p.y)
+        prev_pos = self._last_player_pos or (p.x, p.y)
         player_moved = prev_pos != (p.x, p.y)
         self._last_player_pos = (p.x, p.y)
 

@@ -38,15 +38,16 @@ Armor AC is `base_ac − armor_plus` — lower is better, matching the original'
 
 | Roll | Odds |
 |---|---|
-| Weapon | 25% |
-| Armor | 16% |
-| Potion | 20% |
-| Scroll | 16% |
-| Wand | 10% |
-| Food | 7% |
-| Gold | 6% |
+| Weapon | 22% |
+| Armor | 14% |
+| Potion | 18% |
+| Scroll | 14% |
+| Wand | 9% |
+| Ring | 8% |
+| Food | 8% |
+| Gold | 7% |
 
-20% of dropped weapons and armor carry a random enchantment (`−1, +1, +1, +2`) and spawn unidentified. Gold quantity is `2d10 × dungeon depth`. Potion colors, scroll titles, and wand materials are shuffled fresh each game.
+20% of dropped weapons and armor carry a random enchantment (`−1, +1, +1, +2`) and spawn unidentified. Gold quantity is `2d10 × dungeon depth`. Potion colors, scroll titles, wand materials, and ring stones are shuffled fresh each game.
 
 ### Wands
 
@@ -59,6 +60,18 @@ Five effects, covering both "wands" and "staffs" as a single unified item kind. 
 | Sleep | Target skips its turns entirely for 1d10+5 turns |
 | Teleport Away | Target moved to a random open tile on the level |
 | Polymorph | Target replaced by a random new species (depth-weighted), full HP |
+
+### Rings
+
+Five effects, two slots worn at once (`P` to put on, `R` to remove). Unidentified rings show a random gemstone name (e.g. "a ruby ring") until worn, which also identifies them. Dropping or removing a worn ring immediately stops its effect.
+
+| Ring | Effect |
+|---|---|
+| Protection | +1 to +3 AC (lower is better) while worn |
+| Add Strength | +1 to +3 effective Strength for damage while worn |
+| Regeneration | Natural healing tick fires twice as often |
+| Slow Digestion | Hunger drains at half the normal rate |
+| Searching | Passively searches for nearby hidden traps every turn |
 
 ## Status effects
 

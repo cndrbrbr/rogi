@@ -39,6 +39,7 @@ Requires an 80x24 (or larger) terminal.
 | `z`             | Zap a wand (then pick a direction) |
 | `e`             | Eat food                         |
 | `d`             | Drop an item (or feed the dog if standing next to it) |
+| `P` / `R`       | Put on a ring / remove a ring (max two worn) |
 | `>` / `<`       | Use stairs down / up             |
 | `s` / `.`       | Search / wait a turn             |
 | `?`             | Help screen                      |
@@ -66,3 +67,5 @@ A dog spawns next to you at the start of the game and follows you (including thr
 - **Permadeath & saves**: `Game.save()`/`Game.load()` pickle the whole game state to `save.dat`; the save is deleted on both death and victory, so there's no way to reload past either.
 - **Traps** (`rogue/dungeon.py`, `Game._trigger_trap`): six trap types placed per level, hidden until sprung by stepping on them or spotted with `s` (search). Each trap fires once; a trap door drops you to the next level, the rest damage or afflict you in place.
 - **Wands** (`rogue/items.py`, `Game._zap_wand`): a single item kind covering both "wands" and "staffs" from the original, since they're mechanically identical. Five effects, 3-7 charges each, identified by use. Zapping (`z`) fires a straight-line bolt in a chosen direction that resolves against the first monster it hits.
+- **Rings** (`rogue/entities.py: Player.rings`, `Game._wearing_ring`): two worn slots, five passive effects, identified by wearing. Regeneration and slow digestion piggyback on the existing regen/hunger ticks in `_end_turn`; searching just calls the same `_search()` traps use for the manual `s` command, every turn.
+- **Save compatibility**: `Game`, `Player`, `Monster`, and `Level` all define `__setstate__` to backfill newly-added fields (rings, traps, wand/ring appearance maps, etc.) with defaults when unpickling an older `save.dat`, since `pickle` restores `__dict__` directly without running `__init__`.

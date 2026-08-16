@@ -56,6 +56,11 @@ class Level:
         self.stairs_up = None
         self.discovered = set()
 
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        self.__dict__.setdefault("traps", {})
+        self.__dict__.setdefault("known_traps", set())
+
     def tile(self, x, y):
         if 0 <= x < cfg.MAP_W and 0 <= y < cfg.MAP_H:
             return self.grid[y][x]
