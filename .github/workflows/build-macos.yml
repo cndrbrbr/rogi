@@ -13,12 +13,13 @@ jobs:
   build-macos:
     strategy:
       fail-fast: false
+      # macos-13 (x64) runners were stuck queued indefinitely as of 2026-08-16;
+      # arm64 covers Apple Silicon Macs (M1 and later). Re-add an x64 leg here
+      # if GitHub's Intel runner capacity recovers.
       matrix:
         include:
           - os: macos-14
             arch: arm64
-          - os: macos-13
-            arch: x64
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
