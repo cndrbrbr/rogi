@@ -81,6 +81,13 @@ class Game:
             pos = level.random_open_tile()
             level.items.setdefault(pos, []).append(item)
 
+        n_traps = random.randint(1, 3)
+        for _ in range(n_traps):
+            pos = level.random_open_tile()
+            if pos in level.traps or pos in (level.stairs_up, level.stairs_down):
+                continue
+            level.traps[pos] = random.choice(dungeon.TRAP_KEYS)
+
         if depth == cfg.MAX_DEPTH:
             amulet = items_mod.Item("gold", "gold")
             amulet.kind = "amulet"
@@ -148,6 +155,7 @@ class Game:
         if key == "<":
             return self._use_stairs(down=False)
         if key == "s" or key == ".":
+            self._search()
             self._end_turn()
             return True
         return False
@@ -163,11 +171,63 @@ class Game:
         if self.level.is_walkable(nx, ny):
             p.x, p.y = nx, ny
             self.level.update_discovered(nx, ny)
+            self._check_trap(nx, ny)
             self._auto_pick_up()
             self._end_turn()
             return True
         self.msg("There is a wall in your way.")
         return False
+
+    def _search(self):
+        p = self.player
+        for dx in (-1, 0, 1):
+            for dy in (-1, 0, 1):
+                pos = (p.x + dx, p.y + dy)
+                if pos in self.level.traps and pos not in self.level.known_traps \
+                        and random.random() < 0.33:
+                    self.level.known_traps.add(pos)
+                    self.msg(f"You find a {dungeon.TRAP_NAMES[self.level.traps[pos]]}.")
+
+    def _check_trap(self, x, y):
+        key = self.level.traps.get((x, y))
+        if key is None:
+            return
+        self.level.known_traps.add((x, y))
+        del self.level.traps[(x, y)]
+        self._trigger_trap(key)
+
+    def _trigger_trap(self, key):
+        p = self.player
+        if key == "dart":
+            dmg = roll_dice("1d4")
+            p.hp -= dmg
+            self.msg(f"A dart trap fires! You take {dmg} damage.")
+        elif key == "bear":
+            dmg = roll_dice("1d3")
+            p.hp -= dmg
+            p.paralyzed_turns += roll_dice("1d4") + 2
+            self.msg(f"A bear trap snaps shut on your leg! You take {dmg} damage and can't move.")
+        elif key == "gas_sleep":
+            p.paralyzed_turns += roll_dice("1d6") + 2
+            self.msg("A cloud of gas puts you to sleep!")
+        elif key == "gas_confusion":
+            p.confused_turns += roll_dice("1d10") + 5
+            self.msg("A cloud of gas leaves you confused!")
+        elif key == "teleport":
+            pos = self.level.random_open_tile()
+            p.x, p.y = pos
+            self.level.update_discovered(p.x, p.y)
+            self.msg("The floor vanishes and you are yanked through space!")
+        elif key == "trapdoor":
+            if p.depth >= cfg.MAX_DEPTH:
+                self.msg("The floor trembles but holds.")
+                return
+            p.depth += 1
+            new_level = self._get_level(p.depth)
+            p.x, p.y = new_level.random_open_tile()
+            self.level.update_discovered(p.x, p.y)
+            self._follow_dog(new_level)
+            self.msg(f"The floor gives way beneath you! You fall to level {p.depth}.")
 
     def _auto_pick_up(self):
         p = self.player

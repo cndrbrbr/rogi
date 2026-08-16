@@ -37,6 +37,10 @@ Six weapons, eight armors, each with dice damage or AC values and an optional (i
 
 Nine potion effects, eight scroll effects. Colors and titles are shuffled onto effects fresh each game (`make_appearance_maps`) — "blue potion" means something different every playthrough until identified by use or a scroll of identify. (`rogue/items.py`)
 
+## Traps
+
+Six trap types (dart, bear, sleeping gas, confusion gas, teleport, trap door), hidden on the map until sprung or found by searching. See [Ruleset](ruleset.md#traps) for the full effect table.
+
 ## Hunger clock
 
 Starts at 2000, warns at 300 ("hungry") and 150 ("weak"), then ticks starvation damage every 3 turns once it hits zero.

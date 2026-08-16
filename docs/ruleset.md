@@ -59,6 +59,19 @@ Armor AC is `base_ac − armor_plus` — lower is better, matching the original'
 | Scroll of Aggravate Monsters | Wakes every monster on the level | — |
 | Potion / Scroll of Detect / Mapping | Reveals monster tiles or full layout | — |
 
+## Traps
+
+Six trap types, placed 1–3 per level (never on the stairs), hidden until sprung by stepping on them or spotted by searching (`s`) within one tile — a 33% chance per adjacent unfound trap, per search. A sprung or found trap stays marked `^` on the map; each trap only fires once.
+
+| Trap | Effect |
+|---|---|
+| Dart | 1d4 damage |
+| Bear | 1d3 damage, paralyzed 1d4+2 turns |
+| Sleeping gas | Paralyzed 1d6+2 turns |
+| Confusion gas | Confused 1d10+5 turns |
+| Teleport | Moved to a random open tile on the level |
+| Trap door | Falls to the next dungeon level (no effect at max depth) |
+
 ## Win & lose
 
 **Win** — carry the Amulet of Yendor from wherever it's found back up to dungeon level 1.

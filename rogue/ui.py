@@ -12,6 +12,7 @@ COLOR_MONSTER = 5
 COLOR_ITEM = 6
 COLOR_DIM = 7
 COLOR_DOG = 8
+COLOR_TRAP = 9
 
 ARROW_KEYS = {
     curses.KEY_LEFT: "KEY_LEFT",
@@ -38,6 +39,7 @@ def init_colors():
     curses.init_pair(COLOR_ITEM, curses.COLOR_GREEN, bg)
     curses.init_pair(COLOR_DIM, curses.COLOR_WHITE, bg)
     curses.init_pair(COLOR_DOG, curses.COLOR_MAGENTA, bg)
+    curses.init_pair(COLOR_TRAP, curses.COLOR_RED, bg)
     return True
 
 
@@ -60,6 +62,8 @@ def tile_color(ch, has_color):
         return curses.color_pair(COLOR_STAIRS) | curses.A_BOLD
     if ch in (dungeon.FLOOR, dungeon.CORRIDOR):
         return curses.color_pair(COLOR_DIM) | curses.A_DIM
+    if ch == dungeon.TRAP:
+        return curses.color_pair(COLOR_TRAP) | curses.A_BOLD
     return curses.A_NORMAL
 
 
@@ -75,18 +79,20 @@ def render(stdscr, game, has_color):
             ch = level.tile(x, y)
             if ch == dungeon.VOID:
                 continue
-            if (x, y) in visible:
-                stack = level.items.get((x, y))
+            pos = (x, y)
+            base_ch = dungeon.TRAP if pos in level.known_traps else ch
+            if pos in visible:
+                stack = level.items.get(pos)
                 if stack:
                     disp = stack[-1].symbol()
                     attr = curses.color_pair(COLOR_ITEM) if has_color else curses.A_NORMAL
                 else:
-                    disp = ch
-                    attr = tile_color(ch, has_color)
+                    disp = base_ch
+                    attr = tile_color(base_ch, has_color)
                 _addch_safe(stdscr, cfg.MAP_TOP + y, x, disp, attr)
-            elif (x, y) in level.discovered:
-                stack = level.items.get((x, y))
-                disp = stack[-1].symbol() if stack else ch
+            elif pos in level.discovered:
+                stack = level.items.get(pos)
+                disp = stack[-1].symbol() if stack else base_ch
                 attr = (curses.color_pair(COLOR_DIM) | curses.A_DIM) if has_color else curses.A_DIM
                 _addch_safe(stdscr, cfg.MAP_TOP + y, x, disp, attr)
 
@@ -207,6 +213,9 @@ HELP_TEXT = [
     "",
     "Your dog starts small (d). Drop food (d) while standing next to it",
     "to feed it -- it grows into a big dog (D) that fights for you.",
+    "",
+    "Traps (^) are hidden until sprung or found. Search (s) nearby tiles",
+    "to spot one before you step on it.",
     "",
     "Find the Amulet of Yendor on level 26 and carry it back to level 1 to win.",
     "(press a key to continue)",

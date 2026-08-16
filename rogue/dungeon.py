@@ -9,8 +9,19 @@ DOOR = "+"
 STAIRS_DOWN = ">"
 STAIRS_UP = "<"
 VOID = " "
+TRAP = "^"
 
 WALKABLE = {FLOOR, CORRIDOR, DOOR, STAIRS_DOWN, STAIRS_UP}
+
+TRAP_KEYS = ["dart", "bear", "gas_sleep", "gas_confusion", "teleport", "trapdoor"]
+TRAP_NAMES = {
+    "dart": "dart trap",
+    "bear": "bear trap",
+    "gas_sleep": "sleeping gas trap",
+    "gas_confusion": "confusion gas trap",
+    "teleport": "teleport trap",
+    "trapdoor": "trap door",
+}
 
 
 class Room:
@@ -39,6 +50,8 @@ class Level:
         self.doors = set()
         self.monsters = []
         self.items = {}  # (x,y) -> list[Item]
+        self.traps = {}  # (x,y) -> trap key, hidden until sprung or found by searching
+        self.known_traps = set()  # (x,y) traps the player has seen
         self.stairs_down = None
         self.stairs_up = None
         self.discovered = set()
