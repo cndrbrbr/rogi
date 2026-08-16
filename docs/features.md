@@ -12,6 +12,7 @@ The codebase is complete as of this writing — no stub functions, no `TODO` mar
 | **Scrolls** | 8 |
 | **Weapons** | 6 |
 | **Armors** | 8 |
+| **Wands** | 5 |
 
 ## Procedural dungeons
 
@@ -36,6 +37,10 @@ Six weapons, eight armors, each with dice damage or AC values and an optional (i
 ## Potions & scrolls
 
 Nine potion effects, eight scroll effects. Colors and titles are shuffled onto effects fresh each game (`make_appearance_maps`) — "blue potion" means something different every playthrough until identified by use or a scroll of identify. (`rogue/items.py`)
+
+## Wands
+
+Five effects (striking, confusion, sleep, teleport away, polymorph) covering both "wands" and "staffs" as one unified item kind, each with random charges and a hidden material name until zapped. Press `z`, pick a wand, then a direction — the bolt hits the first monster in a straight line. See [Ruleset](ruleset.md#wands) for the full effect table.
 
 ## Traps
 

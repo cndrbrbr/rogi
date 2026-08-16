@@ -29,7 +29,7 @@ class Game:
         self.player = Player()
         self.levels = {}
         self.messages = []
-        self.potion_appearance, self.scroll_appearance = items_mod.make_appearance_maps()
+        self.potion_appearance, self.scroll_appearance, self.wand_appearance = items_mod.make_appearance_maps()
         self.turn_count = 0
         self.finished = False
         self.win = False
@@ -345,13 +345,18 @@ class Game:
 
     # ---------- item use ----------
 
-    def use_item(self, letter, action):
+    def use_item(self, letter, action, direction=None):
         p = self.player
         item = next((it for it in p.inventory if it.letter == letter), None)
         if item is None:
             self.msg("You don't have that.")
             return False
-        if action == "wield":
+        if action == "zap":
+            if item.kind != "wand":
+                self.msg("You can't zap that.")
+                return False
+            self._zap_wand(item, direction)
+        elif action == "wield":
             if item.kind != "weapon":
                 self.msg("You can't wield that.")
                 return False
@@ -493,6 +498,63 @@ class Game:
             self.msg(f"The dungeon grows quiet around you. ({name})")
         item.identified = True
 
+    def _zap_wand(self, item, direction):
+        p = self.player
+        name = item.display_name(self)
+        if item.charges <= 0:
+            self.msg(f"You zap {name}, but nothing happens.")
+            return
+        item.charges -= 1
+
+        dx, dy = direction
+        x, y = p.x, p.y
+        target = None
+        while True:
+            x += dx
+            y += dy
+            if not self.level.is_walkable(x, y):
+                break
+            target = self.monster_at(x, y)
+            if target is not None:
+                break
+
+        if target is None:
+            self.msg(f"You zap {name}, but the bolt fizzles into the dark.")
+            return
+        item.identified = True
+        self._apply_wand(item.key, target, name)
+
+    def _apply_wand(self, key, target, name):
+        p = self.player
+        if key == "striking":
+            dmg = roll_dice("2d6")
+            target.hp -= dmg
+            self.msg(f"You zap {name} at the {target.name} for {dmg} damage!")
+        elif key == "confusion":
+            target.confused_turns += roll_dice("1d10") + 5
+            self.msg(f"You zap {name}. The {target.name} looks confused!")
+        elif key == "sleep":
+            target.asleep_turns += roll_dice("1d10") + 5
+            self.msg(f"You zap {name}. The {target.name} falls asleep!")
+        elif key == "teleport_away":
+            target.x, target.y = self.level.random_open_tile()
+            self.msg(f"You zap {name}. The {target.name} vanishes!")
+        elif key == "polymorph":
+            species = monsters_data.SPECIES[self._pick_species_index(p.depth)]
+            new_monster = Monster(species, target.x, target.y, p.depth)
+            self.level.monsters.remove(target)
+            self.level.monsters.append(new_monster)
+            self.msg(f"You zap {name}. The {target.name} transforms into a {new_monster.name}!")
+            target = new_monster
+
+        target.awake = True
+        if target.hp <= 0:
+            self.msg(f"The {target.name} dies!")
+            if target in self.level.monsters:
+                self.level.monsters.remove(target)
+            if p.gain_exp(target.exp):
+                self.msg(f"You feel more experienced. Welcome to level {p.level}.")
+
     # ---------- end of turn ----------
 
     def _end_turn(self):
@@ -532,6 +594,9 @@ class Game:
         for m in list(self.level.monsters):
             if m.hp <= 0:
                 continue
+            if m.asleep_turns > 0:
+                m.asleep_turns -= 1
+                continue
             if not m.awake:
                 if (m.x, m.y) in self.level.visible_from(p.x, p.y) and abs(m.x - p.x) + abs(m.y - p.y) <= 6:
                     if random.random() < 0.5:
@@ -543,10 +608,14 @@ class Game:
                     self._monster_attacks(m)
                 continue
 
-            dx = 0 if m.x == p.x else (1 if p.x > m.x else -1)
-            dy = 0 if m.y == p.y else (1 if p.y > m.y else -1)
-            if m.erratic and random.random() < 0.5:
+            if m.confused_turns > 0:
+                m.confused_turns -= 1
                 dx, dy = random.choice([(-1, 0), (1, 0), (0, -1), (0, 1), (0, 0)])
+            else:
+                dx = 0 if m.x == p.x else (1 if p.x > m.x else -1)
+                dy = 0 if m.y == p.y else (1 if p.y > m.y else -1)
+                if m.erratic and random.random() < 0.5:
+                    dx, dy = random.choice([(-1, 0), (1, 0), (0, -1), (0, 1), (0, 0)])
 
             nx, ny = m.x + dx, m.y + dy
             if nx == p.x and ny == p.y:

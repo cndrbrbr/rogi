@@ -207,6 +207,7 @@ HELP_TEXT = [
     "w  wield a weapon      W  wear armor",
     "q  quaff a potion      r  read a scroll",
     "e  eat food            d  drop an item",
+    "z  zap a wand (then pick a direction)",
     ">  go down stairs      <  go up stairs",
     "s  search / wait       ?  this help screen",
     "Q  quit the game",
@@ -327,6 +328,15 @@ def run(stdscr):
             letter = choose_item(stdscr, game, "scroll", "read")
             if letter:
                 game.use_item(letter, "read")
+            continue
+        if key == "z":
+            letter = choose_item(stdscr, game, "wand", "zap")
+            if letter:
+                prompt(stdscr, "Zap in which direction?")
+                stdscr.refresh()
+                dkey = read_key(stdscr)
+                if dkey in DIRS:
+                    game.use_item(letter, "zap", direction=DIRS[dkey])
             continue
         if key == "e":
             letter = choose_item(stdscr, game, "food", "eat")

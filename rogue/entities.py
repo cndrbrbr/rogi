@@ -109,3 +109,4 @@ class Monster:
         self.awake = species["mean"]
         self.depth = depth
         self.confused_turns = 0
+        self.asleep_turns = 0

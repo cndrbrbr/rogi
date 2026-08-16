@@ -56,6 +56,19 @@ SCROLL_NAMES = {
 }
 _SYLLABLES = ["xyzzy", "zelgo", "mer", "flum", "quor", "gna", "vex", "thra", "poc", "lum", "ith", "dun"]
 
+WAND_KEYS = ["striking", "confusion", "sleep", "teleport_away", "polymorph"]
+WAND_NAMES = {
+    "striking": "Wand of Striking",
+    "confusion": "Wand of Confusion",
+    "sleep": "Wand of Sleep",
+    "teleport_away": "Wand of Teleport Away",
+    "polymorph": "Wand of Polymorph",
+}
+WAND_MATERIALS = [
+    "oak", "pine", "walnut", "maple", "ebony", "bronze",
+    "copper", "iron", "silver", "tin", "bone", "crystal",
+]
+
 FOODS = [
     dict(key="ration", name="Ration of Food", nutrition_dice="1d600+1500"),
     dict(key="mango", name="Mango Fruit", nutrition_dice="1d300+500"),
@@ -67,6 +80,10 @@ def make_appearance_maps():
     random.shuffle(colors)
     potion_map = {key: colors[i] for i, key in enumerate(POTION_KEYS)}
 
+    materials = WAND_MATERIALS[:]
+    random.shuffle(materials)
+    wand_map = {key: materials[i] for i, key in enumerate(WAND_KEYS)}
+
     scroll_map = {}
     used_titles = set()
     for key in SCROLL_KEYS:
@@ -76,7 +93,7 @@ def make_appearance_maps():
                 used_titles.add(title)
                 scroll_map[key] = title
                 break
-    return potion_map, scroll_map
+    return potion_map, scroll_map, wand_map
 
 
 class Item:
@@ -85,7 +102,7 @@ class Item:
         self.key = key
         self.letter = letter
         self.plus = 0
-        self.identified = kind not in ("potion", "scroll")
+        self.identified = kind not in ("potion", "scroll", "wand")
         self.quantity = 1
 
         if kind == "weapon":
@@ -102,6 +119,9 @@ class Item:
             self.base_name = POTION_NAMES[key]
         elif kind == "scroll":
             self.base_name = SCROLL_NAMES[key]
+        elif kind == "wand":
+            self.base_name = WAND_NAMES[key]
+            self.charges = random.randint(3, 7)
         elif kind == "food":
             data = next(f for f in FOODS if f["key"] == key)
             self.base_name = data["name"]
@@ -124,6 +144,10 @@ class Item:
             if self.identified:
                 return self.base_name
             return f'scroll titled "{game.scroll_appearance[self.key]}"'
+        if self.kind == "wand":
+            if self.identified:
+                return f"{self.base_name} [{self.charges}]"
+            return f"{game.wand_appearance[self.key]} wand"
         if self.kind == "food":
             return self.base_name
         if self.kind == "gold":
@@ -136,6 +160,7 @@ class Item:
             "armor": "[",
             "potion": "!",
             "scroll": "?",
+            "wand": "/",
             "food": "%",
             "gold": "*",
         }[self.kind]
@@ -143,24 +168,26 @@ class Item:
 
 def random_item(depth):
     roll = random.random()
-    if roll < 0.28:
+    if roll < 0.25:
         key = random.choice(WEAPONS)["key"]
         item = Item("weapon", key)
         if random.random() < 0.2:
             item.plus = random.choice([-1, 1, 1, 2])
             item.identified = False
         return item
-    if roll < 0.46:
+    if roll < 0.41:
         key = random.choice(ARMORS)["key"]
         item = Item("armor", key)
         if random.random() < 0.2:
             item.plus = random.choice([-1, 1, 1, 2])
             item.identified = False
         return item
-    if roll < 0.68:
+    if roll < 0.61:
         return Item("potion", random.choice(POTION_KEYS))
-    if roll < 0.86:
+    if roll < 0.77:
         return Item("scroll", random.choice(SCROLL_KEYS))
+    if roll < 0.87:
+        return Item("wand", random.choice(WAND_KEYS))
     if roll < 0.94:
         return Item("food", random.choice(FOODS)["key"])
     item = Item("gold", "gold")

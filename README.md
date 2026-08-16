@@ -36,6 +36,7 @@ Requires an 80x24 (or larger) terminal.
 | `i`             | Show inventory                  |
 | `w` / `W`       | Wield a weapon / wear armor      |
 | `q` / `r`       | Quaff a potion / read a scroll   |
+| `z`             | Zap a wand (then pick a direction) |
 | `e`             | Eat food                         |
 | `d`             | Drop an item (or feed the dog if standing next to it) |
 | `>` / `<`       | Use stairs down / up             |
@@ -64,3 +65,4 @@ A dog spawns next to you at the start of the game and follows you (including thr
 - **The dog** (`rogue/entities.py: Dog`, `rogue/game.py: Game._dog_turn`): attacks any monster adjacent to it instead of moving; otherwise closes the gap whenever more than one tile from the player, and starts closing it the instant the player takes a step. Once caught up and the player is standing still, it roams freely around the room the player is in rather than sitting fixed at their side. Unkillable by design (no hp tracked) to keep it a simple companion rather than another thing to manage.
 - **Permadeath & saves**: `Game.save()`/`Game.load()` pickle the whole game state to `save.dat`; the save is deleted on both death and victory, so there's no way to reload past either.
 - **Traps** (`rogue/dungeon.py`, `Game._trigger_trap`): six trap types placed per level, hidden until sprung by stepping on them or spotted with `s` (search). Each trap fires once; a trap door drops you to the next level, the rest damage or afflict you in place.
+- **Wands** (`rogue/items.py`, `Game._zap_wand`): a single item kind covering both "wands" and "staffs" from the original, since they're mechanically identical. Five effects, 3-7 charges each, identified by use. Zapping (`z`) fires a straight-line bolt in a chosen direction that resolves against the first monster it hits.

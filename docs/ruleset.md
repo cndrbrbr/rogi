@@ -38,14 +38,27 @@ Armor AC is `base_ac − armor_plus` — lower is better, matching the original'
 
 | Roll | Odds |
 |---|---|
-| Weapon | 28% |
-| Armor | 18% |
-| Potion | 22% |
-| Scroll | 18% |
-| Food | 8% |
+| Weapon | 25% |
+| Armor | 16% |
+| Potion | 20% |
+| Scroll | 16% |
+| Wand | 10% |
+| Food | 7% |
 | Gold | 6% |
 
-20% of dropped weapons and armor carry a random enchantment (`−1, +1, +1, +2`) and spawn unidentified. Gold quantity is `2d10 × dungeon depth`. Potion colors and scroll titles are shuffled fresh each game.
+20% of dropped weapons and armor carry a random enchantment (`−1, +1, +1, +2`) and spawn unidentified. Gold quantity is `2d10 × dungeon depth`. Potion colors, scroll titles, and wand materials are shuffled fresh each game.
+
+### Wands
+
+Five effects, covering both "wands" and "staffs" as a single unified item kind. Each spawns with 3–7 charges and unidentified — shown by a random material name (e.g. "a copper wand") until zapped at a monster, at which point its true name and remaining charges become known. Zap with `z`, pick the wand, then a direction; the bolt travels in a straight line and affects the first monster it hits, or fizzles if nothing's in its path. A wand at 0 charges still zaps but does nothing, and doesn't reveal its identity.
+
+| Wand | Effect |
+|---|---|
+| Striking | 2d6 damage |
+| Confusion | Target moves erratically for 1d10+5 turns |
+| Sleep | Target skips its turns entirely for 1d10+5 turns |
+| Teleport Away | Target moved to a random open tile on the level |
+| Polymorph | Target replaced by a random new species (depth-weighted), full HP |
 
 ## Status effects
 
