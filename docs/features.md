@@ -47,7 +47,7 @@ Starts at 2000, warns at 300 ("hungry") and 150 ("weak"), then ticks starvation 
 
 ## Companion dog
 
-Spawns next to you at game start and follows you (including through stairs). Stand next to it and drop a food item (`d`) to feed it — it grows from a small `d` into a big `D` and will fight monsters that come near it. Unkillable by design (no hp tracked), to keep it a simple companion rather than another thing to manage. (`rogue/entities.py: Dog`, `rogue/game.py: Game._dog_turn`)
+Spawns next to you at game start and follows you (including through stairs). While you're standing still it roams freely around the room you're in rather than sitting fixed at your side; the instant you move, it drops the wandering and starts closing the gap. Stand next to it and drop a food item (`d`) to feed it — it grows from a small `d` into a big `D` and will fight monsters that come near it. Unkillable by design (no hp tracked), to keep it a simple companion rather than another thing to manage. (`rogue/entities.py: Dog`, `rogue/game.py: Game._dog_turn`)
 
 ## 26-letter bestiary
 

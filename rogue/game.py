@@ -35,6 +35,7 @@ class Game:
         self.win = False
         self.end_reason = ""
         self.dog = None
+        self._last_player_pos = None
 
     # ---------- setup ----------
 
@@ -42,6 +43,7 @@ class Game:
         self.player = Player()
         level = self._get_level(1)
         self.player.x, self.player.y = level.stairs_up
+        self._last_player_pos = (self.player.x, self.player.y)
         dog_pos = self._adjacent_open_tile(level, self.player.x, self.player.y)
         self.dog = Dog(dog_pos[0], dog_pos[1])
         self.msg(f"Welcome to the Dungeons of Doom, {self._hero_name()}.")
@@ -579,31 +581,44 @@ class Game:
                 self.msg(f"{dog.name} misses the {adjacent_monster.name}.")
             return
 
-        if max(abs(dog.x - p.x), abs(dog.y - p.y)) <= 1:
-            candidates = []
-            for ddx in (-1, 0, 1):
-                for ddy in (-1, 0, 1):
-                    if ddx == 0 and ddy == 0:
-                        continue
-                    nx, ny = dog.x + ddx, dog.y + ddy
-                    if max(abs(nx - p.x), abs(ny - p.y)) > 1:
-                        continue
-                    if (nx, ny) == (p.x, p.y):
-                        continue
-                    if not self.level.is_walkable(nx, ny):
-                        continue
-                    if self.monster_at(nx, ny) is not None:
-                        continue
-                    candidates.append((nx, ny))
-            if candidates:
-                dog.x, dog.y = random.choice(candidates)
+        prev_pos = getattr(self, "_last_player_pos", None) or (p.x, p.y)
+        player_moved = prev_pos != (p.x, p.y)
+        self._last_player_pos = (p.x, p.y)
+
+        dist = max(abs(dog.x - p.x), abs(dog.y - p.y))
+        if dist > 1:
+            # too far behind -- close the gap regardless of whether the
+            # player moved this turn, so the dog can't get stuck for good
+            dx = 0 if dog.x == p.x else (1 if p.x > dog.x else -1)
+            dy = 0 if dog.y == p.y else (1 if p.y > dog.y else -1)
+            nx, ny = dog.x + dx, dog.y + dy
+            if self.level.is_walkable(nx, ny) and self.monster_at(nx, ny) is None and (nx, ny) != (p.x, p.y):
+                dog.x, dog.y = nx, ny
             return
 
-        dx = 0 if dog.x == p.x else (1 if p.x > dog.x else -1)
-        dy = 0 if dog.y == p.y else (1 if p.y > dog.y else -1)
-        nx, ny = dog.x + dx, dog.y + dy
-        if self.level.is_walkable(nx, ny) and self.monster_at(nx, ny) is None and (nx, ny) != (p.x, p.y):
-            dog.x, dog.y = nx, ny
+        if player_moved:
+            # already at heel -- start following instead of wandering
+            return
+
+        # player is standing still: roam the room they're in
+        room = self.level.room_at(p.x, p.y)
+        candidates = []
+        for ddx, ddy in ((1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, 1), (1, -1), (-1, -1)):
+            nx, ny = dog.x + ddx, dog.y + ddy
+            if (nx, ny) == (p.x, p.y):
+                continue
+            if not self.level.is_walkable(nx, ny):
+                continue
+            if self.monster_at(nx, ny) is not None:
+                continue
+            if room is not None:
+                if not room.contains(nx, ny):
+                    continue
+            elif max(abs(nx - p.x), abs(ny - p.y)) > 1:
+                continue
+            candidates.append((nx, ny))
+        if candidates:
+            dog.x, dog.y = random.choice(candidates)
 
     def _monster_attacks(self, m):
         p = self.player
