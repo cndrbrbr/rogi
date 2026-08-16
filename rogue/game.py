@@ -367,16 +367,26 @@ class Game:
             if item.kind != "weapon":
                 self.msg("You can't wield that.")
                 return False
+            if p.weapon is not None and p.weapon is not item and p.weapon.cursed:
+                self.msg(f"You can't remove the cursed {p.weapon.base_name} to wield something else!")
+                return False
             p.weapon = item
             item.identified = True
             self.msg(f"You are wielding {item.display_name(self)}.")
+            if item.cursed:
+                self.msg("You feel a malevolent chill... it's cursed and stuck to your hand!")
         elif action == "wear":
             if item.kind != "armor":
                 self.msg("You can't wear that.")
                 return False
+            if p.armor is not None and p.armor is not item and p.armor.cursed:
+                self.msg(f"You can't remove the cursed {p.armor.base_name} to wear something else!")
+                return False
             p.armor = item
             item.identified = True
             self.msg(f"You are wearing {item.display_name(self)}.")
+            if item.cursed:
+                self.msg("You feel a malevolent chill... it's cursed and stuck to your body!")
         elif action == "quaff":
             if item.kind != "potion":
                 self.msg("You can't drink that.")
@@ -410,13 +420,24 @@ class Game:
             p.rings[p.rings.index(None)] = item
             item.identified = True
             self.msg(f"You put on {item.display_name(self)}.")
+            if item.cursed:
+                self.msg("You feel a malevolent chill... it's cursed and stuck to your finger!")
         elif action == "remove_ring":
             if item not in p.rings:
                 self.msg("You're not wearing that ring.")
                 return False
+            if item.cursed:
+                self.msg(f"You can't remove the cursed {item.base_name}, it's stuck to your finger!")
+                return False
             p.rings[p.rings.index(item)] = None
             self.msg(f"You remove {item.display_name(self)}.")
         elif action == "drop":
+            if item in (p.weapon, p.armor) and item.cursed:
+                self.msg(f"You can't drop the cursed {item.base_name}, it's stuck to you!")
+                return False
+            if item in p.rings and item.cursed:
+                self.msg(f"You can't drop the cursed {item.base_name}, it's stuck to your finger!")
+                return False
             p.inventory.remove(item)
             if item in p.rings:
                 p.rings[p.rings.index(item)] = None
@@ -490,6 +511,7 @@ class Game:
         elif key == "enchant_weapon":
             if p.weapon:
                 p.weapon.plus += 1
+                p.weapon.cursed = False
                 p.weapon.identified = True
                 self.msg(f"Your {p.weapon.base_name} glows blue. ({name})")
             else:
@@ -497,6 +519,7 @@ class Game:
         elif key == "enchant_armor":
             if p.armor:
                 p.armor.plus += 1
+                p.armor.cursed = False
                 p.armor.identified = True
                 self.msg(f"Your {p.armor.base_name} glows silver. ({name})")
             else:
@@ -524,6 +547,15 @@ class Game:
                 if abs(m.x - p.x) <= 3 and abs(m.y - p.y) <= 3:
                     m.awake = False
             self.msg(f"The dungeon grows quiet around you. ({name})")
+        elif key == "remove_curse":
+            worn = [it for it in (p.weapon, p.armor, *p.rings) if it is not None]
+            cleared = [it for it in worn if it.cursed]
+            for it in cleared:
+                it.cursed = False
+            if cleared:
+                self.msg(f"You feel as if somebody is watching over you. ({name})")
+            else:
+                self.msg(f"You feel as if somebody is watching over you, but nothing happens. ({name})")
         item.identified = True
 
     def _zap_wand(self, item, direction):

@@ -43,6 +43,7 @@ POTION_COLORS = [
 SCROLL_KEYS = [
     "identify", "enchant_weapon", "enchant_armor", "teleportation",
     "magic_mapping", "aggravate_monsters", "sleep", "scare_monster",
+    "remove_curse",
 ]
 SCROLL_NAMES = {
     "identify": "Scroll of Identify",
@@ -53,6 +54,7 @@ SCROLL_NAMES = {
     "aggravate_monsters": "Scroll of Aggravate Monsters",
     "sleep": "Scroll of Sleep",
     "scare_monster": "Scroll of Scare Monster",
+    "remove_curse": "Scroll of Remove Curse",
 }
 _SYLLABLES = ["xyzzy", "zelgo", "mer", "flum", "quor", "gna", "vex", "thra", "poc", "lum", "ith", "dun"]
 
@@ -119,6 +121,7 @@ class Item:
         self.key = key
         self.letter = letter
         self.plus = 0
+        self.cursed = False
         self.identified = kind not in ("potion", "scroll", "wand", "ring")
         self.quantity = 1
 
@@ -151,12 +154,12 @@ class Item:
             self.base_name = "Gold Pieces"
 
     def display_name(self, game):
-        if self.kind == "weapon":
+        if self.kind in ("weapon", "armor"):
+            if not self.identified:
+                return self.base_name
             sign = f"+{self.plus}" if self.plus >= 0 else str(self.plus)
-            return f"{sign} {self.base_name}" if self.identified else self.base_name
-        if self.kind == "armor":
-            sign = f"+{self.plus}" if self.plus >= 0 else str(self.plus)
-            return f"{sign} {self.base_name}" if self.identified else self.base_name
+            name = f"{sign} {self.base_name}"
+            return f"{name} (cursed)" if self.cursed else name
         if self.kind == "potion":
             if self.identified:
                 return self.base_name
@@ -174,8 +177,10 @@ class Item:
                 return f"{game.ring_appearance[self.key]} ring"
             if self.key in ("protection", "add_strength"):
                 sign = f"+{self.plus}" if self.plus >= 0 else str(self.plus)
-                return f"{self.base_name} {sign}"
-            return self.base_name
+                name = f"{self.base_name} {sign}"
+            else:
+                name = self.base_name
+            return f"{name} (cursed)" if self.cursed else name
         if self.kind == "food":
             return self.base_name
         if self.kind == "gold":
@@ -202,6 +207,7 @@ def random_item(depth):
         item = Item("weapon", key)
         if random.random() < 0.2:
             item.plus = random.choice([-1, 1, 1, 2])
+            item.cursed = item.plus < 0
             item.identified = False
         return item
     if roll < 0.36:
@@ -209,6 +215,7 @@ def random_item(depth):
         item = Item("armor", key)
         if random.random() < 0.2:
             item.plus = random.choice([-1, 1, 1, 2])
+            item.cursed = item.plus < 0
             item.identified = False
         return item
     if roll < 0.54:
@@ -218,7 +225,13 @@ def random_item(depth):
     if roll < 0.77:
         return Item("wand", random.choice(WAND_KEYS))
     if roll < 0.85:
-        return Item("ring", random.choice(RING_KEYS))
+        key = random.choice(RING_KEYS)
+        item = Item("ring", key)
+        if random.random() < 0.15:
+            item.cursed = True
+            if key in ("protection", "add_strength"):
+                item.plus = -item.plus
+        return item
     if roll < 0.93:
         return Item("food", random.choice(FOODS)["key"])
     item = Item("gold", "gold")

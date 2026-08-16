@@ -9,7 +9,7 @@ The codebase is complete as of this writing — no stub functions, no `TODO` mar
 | **Depths** | 26 |
 | **Species A–Z** | 26 |
 | **Potions** | 9 |
-| **Scrolls** | 8 |
+| **Scrolls** | 9 |
 | **Weapons** | 6 |
 | **Armors** | 8 |
 | **Wands** | 5 |
@@ -37,7 +37,11 @@ Six weapons, eight armors, each with dice damage or AC values and an optional (i
 
 ## Potions & scrolls
 
-Nine potion effects, eight scroll effects. Colors and titles are shuffled onto effects fresh each game (`make_appearance_maps`) — "blue potion" means something different every playthrough until identified by use or a scroll of identify. (`rogue/items.py`)
+Nine potion effects, nine scroll effects. Colors and titles are shuffled onto effects fresh each game (`make_appearance_maps`) — "blue potion" means something different every playthrough until identified by use or a scroll of identify. (`rogue/items.py`)
+
+## Cursed items
+
+A weapon, armor piece, or ring can spawn cursed — usually alongside a negative enchantment, though a cursed ring can carry no numeric penalty at all. Equipping one locks it in place: no swapping, no removing, no dropping, until a Scroll of Remove Curse (or, for weapon/armor, a Scroll of Enchant on that slot) lifts it. See [Ruleset](ruleset.md#curses) for the exact rules.
 
 ## Wands
 

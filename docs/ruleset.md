@@ -47,7 +47,11 @@ Armor AC is `base_ac − armor_plus` — lower is better, matching the original'
 | Food | 8% |
 | Gold | 7% |
 
-20% of dropped weapons and armor carry a random enchantment (`−1, +1, +1, +2`) and spawn unidentified. Gold quantity is `2d10 × dungeon depth`. Potion colors, scroll titles, wand materials, and ring stones are shuffled fresh each game.
+20% of dropped weapons and armor carry a random enchantment (`−1, +1, +1, +2`) and spawn unidentified; a negative roll is cursed. Rings have an independent 15% chance to be cursed. Gold quantity is `2d10 × dungeon depth`. Potion colors, scroll titles, wand materials, and ring stones are shuffled fresh each game.
+
+### Curses
+
+A cursed weapon, armor, or ring can be worn/wielded/put on freely, but can't be removed, swapped for something else, or dropped afterward — it becomes identified the moment it's equipped, along with a "(cursed)" tag and a warning message. Two ways out: a **Scroll of Enchant Weapon/Armor** clears the curse on whatever's currently equipped in that slot (in addition to its normal `+1`), or a **Scroll of Remove Curse** clears curses on everything currently worn/wielded at once (weapon, armor, both rings).
 
 ### Wands
 
